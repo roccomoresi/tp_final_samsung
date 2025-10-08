@@ -1,197 +1,47 @@
-Excelente 🔥
-Acá tenés el **`README.md` inicial completo y profesional**, listo para copiar y pegar en tu repositorio `tp_final_samsung`:
+# 🤖 TP Final - Samsung Innovation Campus  
+### Proyecto en desarrollo
 
 ---
 
-```markdown
-# 🤖 TP Final - Samsung Innovation Campus  
-### Proyecto: Bot con Reconocimiento de Voz y Análisis de Sentimientos  
+## 👥 Integrantes
+
+- **Rocco**  
+- **Guada**  
+- **Fabi**
 
 ---
 
 ## 🧠 Descripción general
 
-Este proyecto forma parte del **Trabajo Práctico Final** del programa **Samsung Innovation Campus**.  
-El objetivo es desarrollar un **bot inteligente** con las siguientes capacidades:
+Este repositorio corresponde al **Trabajo Práctico Final** del curso **Samsung Innovation Campus**.  
+El proyecto se encuentra en su **etapa inicial de ideación**, donde se definirán las funcionalidades principales del bot, cumpliendo con los siguientes requisitos:
 
-- 🎙️ **Reconocimiento de voz:** interpretar mensajes de audio enviados por el usuario.  
-- 💬 **Análisis de sentimientos:** identificar si una frase tiene tono **positivo**, **negativo** o **neutral**.  
-- 🧩 **Integración con IA:** aprovechar modelos preentrenados (Transformers) para el procesamiento del lenguaje natural.  
-- 🤝 **Interacción vía Telegram:** el usuario puede enviar mensajes o audios, y el bot responde de forma automática.
+- 🎙️ **Reconocimiento de voz**  
+- 💬 **Análisis de sentimientos**  
+- 🧩 **Una tercera funcionalidad libre y creativa**
 
----
-
-## ⚙️ Tecnologías utilizadas
-
-| Componente | Descripción |
-|-------------|-------------|
-| **Python 3.10+** | Lenguaje principal del proyecto |
-| **Telegram Bot API** | Canal de comunicación con los usuarios |
-| **Groq API** | Reconocimiento de voz y respuestas con modelos LLM |
-| **Transformers (Hugging Face)** | Análisis de sentimientos en texto |
-| **Torch** | Framework base para modelos de NLP |
-| **Scikit-learn** | Modelado y métricas de aprendizaje automático |
-| **dotenv** | Manejo de variables de entorno |
-| **Requests / HTTPX** | Comunicación con APIs externas |
+Actualmente el equipo se encuentra evaluando diferentes ideas para el desarrollo del bot, con el objetivo de crear una herramienta **útil, original y con impacto social**.
 
 ---
 
-## 🧩 Estructura del repositorio
+## 🚀 Estado actual
 
-```
-
-tp_final_samsung/
-│
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── .env.example
-│
-├── src/
-│   ├── bot_voz.py                 # Código principal del bot de Telegram
-│   ├── analysis/
-│   │   ├── sentiment_analysis.py  # Análisis de sentimientos con Transformers
-│   │   ├── regression_model.py    # Ejemplo de regresión supervisada
-│   │   ├── svm_classifier.py      # Clasificador SVM
-│   │   └── metrics.py             # Métricas (precision, recall, etc.)
-│   ├── utils/
-│   │   ├── preprocessing.py       # Limpieza y normalización de texto
-│   │   └── audio_tools.py         # Utilidades para manejo de voz
-│   └── notebooks/
-│       └── AnalisisSentimientos.ipynb
-│
-└── data/
-├── dataset.json               # Datos base del bot
-└── temp/                      # Carpeta temporal para audios
-
-````
+✅ Repositorio creado  
+✅ Integrantes confirmados  
+🔄 Definición de funcionalidades en curso  
+🔜 Implementación del prototipo
 
 ---
 
-## 🚀 Instalación y ejecución
+## 📅 Etapas próximas
 
-### 1️⃣ Clonar el repositorio
-```bash
-git clone https://github.com/<tu_usuario>/tp_final_samsung.git
-cd tp_final_samsung
-````
-
-### 2️⃣ Crear y activar entorno virtual
-
-```bash
-python -m venv env
-# Activar:
-# En Windows:
-env\Scripts\activate
-# En macOS/Linux:
-source env/bin/activate
-```
-
-### 3️⃣ Instalar dependencias
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 4️⃣ Configurar variables de entorno
-
-Copiá el archivo `.env.example` como `.env` y completá tus claves:
-
-```
-TELEGRAM_TOKEN=tu_token_de_telegram
-GROQ_API_KEY=tu_api_key_de_groq
-```
+1. Brainstorming de ideas y selección de la temática del bot  
+2. Diseño del flujo de interacción y definición técnica  
+3. Implementación de reconocimiento de voz y análisis de sentimientos  
+4. Integración de la tercera funcionalidad  
+5. Pruebas y presentación final
 
 ---
 
-## ▶️ Ejecutar el bot
-
-Desde la carpeta raíz:
-
-```bash
-cd src
-python bot_voz.py
-```
-
-El bot se iniciará y responderá en Telegram a:
-
-* Mensajes de texto 💬
-* Mensajes de voz 🎙️ (que se transcriben automáticamente con Groq)
-
----
-
-## 🧠 Análisis de Sentimientos
-
-Podés probar el modelo de sentimiento por separado en `src/analysis/sentiment_analysis.py`:
-
-```python
-from transformers import pipeline
-
-analizador = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-
-frases = [
-    "¡Este curso es increíble!",
-    "Estoy muy cansado y frustrado con los resultados.",
-    "No está mal, pero podría mejorar."
-]
-
-for f in frases:
-    resultado = analizador(f)
-    print(f"{f} → {resultado}")
-```
-
----
-
-## 👨‍💻 Colaboración y flujo de trabajo
-
-Este proyecto sigue una estructura de ramas estilo **Git Flow**:
-
-| Rama          | Propósito                               |
-| ------------- | --------------------------------------- |
-| `main`        | versión estable                         |
-| `develop`     | desarrollo en curso                     |
-| `feature/...` | nuevas funcionalidades (por integrante) |
-
-Comandos básicos:
-
-```bash
-git checkout -b feature/analisis-sentimientos
-git add .
-git commit -m "Agrego modelo de análisis de sentimientos"
-git push origin feature/analisis-sentimientos
-```
-
-Luego crear un **Pull Request** en GitHub para integrar los cambios en `develop`.
-
----
-
-## 👥 Integrantes del equipo
-
-| Nombre       | Rol                         | GitHub                             |
-| ------------ | --------------------------- | ---------------------------------- |
-| Rocco        | Coordinador / Dev principal | [@Rocco](https://github.com/rocco) |
-| Integrante 2 | ML Engineer                 | —                                  |
-| Integrante 3 | Data Analyst / Testing      | —                                  |
-
----
-
-## 📚 Referencias
-
-* [Hugging Face Transformers](https://huggingface.co/docs/transformers/index)
-* [Groq API](https://groq.com/)
-* [Telegram Bot API Docs](https://core.telegram.org/bots/api)
-* [Scikit-learn Documentation](https://scikit-learn.org/stable/)
-* [Samsung Innovation Campus](https://www.samsung.com/ar/innovation-campus/)
-
----
-
-> 🧩 *Desarrollado en el marco del Samsung Innovation Campus 5ª edición - Módulo de Inteligencia Artificial (IA y Machine Learning).*
-
-```
-
----
-
-¿Querés que te lo adapte con **los nombres reales de los tres integrantes** (como figura en la entrega del TP) y con el **nombre exacto del bot** que van a usar (por ejemplo `@SICSentimentBot`)?  
-Así te lo dejo 100 % listo para el commit inicial.
-```
+> 📍 Proyecto desarrollado por el grupo de **Rocco, Guada y Fabi**  
+> Samsung Innovation Campus - 5ª Edición
