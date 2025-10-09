@@ -1,0 +1,6 @@
+python-dotenv
+pyTelegramBotAPI
+groq
+requests
+transformers
+torch
