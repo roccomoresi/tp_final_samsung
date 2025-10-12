@@ -1,79 +1,47 @@
-"""
-habit_recommender.py
---------------------
-Genera recomendaciones personalizadas de bienestar alimenticio
-según el texto del usuario y su estado emocional detectado.
-"""
+# src/analysis/habit_recommender.py
+from groq import Groq
+from utils.memory_manager import get_user_history, add_message
+import os
+from dotenv import load_dotenv
 
-import random
+load_dotenv()
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# Diccionario base de respuestas organizadas por sentimiento
-RECOMENDACIONES = {
-    "positivo": [
-        "👏 ¡Excelente actitud! Seguí así, recordá que la constancia es la clave 🥗",
-        "💪 Me encanta tu energía. Aprovechá para planear una comida balanceada hoy.",
-        "🌞 Estás en un buen momento, no olvides hidratarte bien y disfrutar del proceso."
-    ],
-    "neutro": [
-        "🙂 Recordá escuchar a tu cuerpo. ¿Tenés hambre real o es más por hábito?",
-        "🤔 Podés aprovechar este momento para elegir algo liviano y nutritivo.",
-        "🧘‍♂️ Comer despacio y sin distracciones ayuda a conectar con tus sensaciones."
-    ],
-    "negativo": [
-        "😔 Entiendo cómo te sentís. A veces la ansiedad se disfraza de hambre, intentá respirar profundo antes de comer.",
-        "🍵 Cuando sientas ansiedad, probá tomar agua o un té antes de decidir qué comer.",
-        "🫶 No te castigues por tener un mal día. Lo importante es volver a elegir bien en la próxima comida."
-    ]
-}
-
-# Palabras clave para detectar contextos específicos
-CONTEXTOS = {
-    "ansiedad": "La ansiedad por comer es común. Tratá de identificar si tu cuerpo realmente tiene hambre o si busca consuelo. Respirá profundo antes de decidir.",
-    "dulce": "Si te dan ganas de algo dulce, podés optar por frutas o yogures naturales. Son opciones más saludables 🍓",
-    "hambre": "Comer con hambre real es importante. Elegí alimentos que te den energía sostenida: proteínas, frutas, cereales integrales 🍎",
-    "triste": "Cuando te sientas bajón, tratá de no refugiarte en la comida. A veces una caminata corta o hablar con alguien puede ayudarte 🌱",
-    "feliz": "Si estás de buen ánimo, aprovechá para cocinar algo saludable que te guste mucho. Disfrutar también es parte del bienestar 🍽️"
-}
-
-
-def detectar_contexto(texto_usuario: str) -> str:
+def generar_recomendacion(texto: str, sentimiento: str, user_id: int) -> str:
     """
-    Detecta si el texto del usuario menciona alguna palabra clave
-    asociada a un contexto alimenticio o emocional.
+    Genera una recomendación personalizada combinando:
+    - texto del usuario
+    - su emoción detectada
+    - historial de conversación
     """
-    texto = texto_usuario.lower()
-    for palabra, respuesta in CONTEXTOS.items():
-        if palabra in texto:
-            return respuesta
-    return ""
+    history = get_user_history(user_id)
+    add_message(user_id, "user", texto)
 
+    tono = {
+        "POS": "El usuario se siente positivo y motivado 😄. Reforzá hábitos saludables y metas nuevas.",
+        "NEG": "El usuario se siente decaído o frustrado 😔. Sé empático y alentador, ofrecé pasos pequeños.",
+        "NEU": "El usuario está neutro 😐. Usá un tono tranquilo y profesional, proponé algo equilibrado."
+    }.get(sentimiento, "El usuario tiene un estado emocional neutro.")
 
-def generar_recomendacion(texto_usuario: str, sentimiento: str) -> str:
+    system_prompt = f"""
+Sos un coach virtual de bienestar y alimentación consciente 🍎.
+Tu misión es ayudar al usuario a mejorar sus hábitos alimenticios y emocionales.
+
+Indicaciones:
+- Sé empático, cálido y motivador.
+- Basate en su estado emocional: {tono}
+- Respondé con consejos prácticos y personalizados.
+- Usá lenguaje natural, cercano y con emojis relacionados a salud y comida.
+- No des consejos médicos; solo hábitos saludables y motivación.
     """
-    Genera una recomendación según el sentimiento detectado y el contenido del texto.
-    """
-    sentimiento = sentimiento.lower()
 
-    # Buscar contexto específico (ej: "ansiedad", "dulce", etc.)
-    contexto = detectar_contexto(texto_usuario)
+    chat_completion = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        temperature=0.6,
+        max_tokens=500,
+        messages=[{"role": "system", "content": system_prompt}] + history
+    )
 
-    # Elegir recomendación base según sentimiento
-    if "pos" in sentimiento:
-        base = random.choice(RECOMENDACIONES["positivo"])
-    elif "neg" in sentimiento:
-        base = random.choice(RECOMENDACIONES["negativo"])
-    else:
-        base = random.choice(RECOMENDACIONES["neutro"])
-
-    # Combinar ambas partes si hay contexto detectado
-    if contexto:
-        return f"{base}\n\n💡 {contexto}"
-    else:
-        return base
-
-
-if __name__ == "__main__":
-    # Ejemplo de prueba
-    ejemplo_texto = "Me siento ansioso por comer algo dulce"
-    ejemplo_sentimiento = "negativo"
-    print(generar_recomendacion(ejemplo_texto, ejemplo_sentimiento))
+    respuesta = chat_completion.choices[0].message.content.strip()
+    add_message(user_id, "assistant", respuesta)
+    return respuesta
