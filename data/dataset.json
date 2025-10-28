@@ -1,0 +1,57 @@
+{
+  "company_info": {
+    "name": "Asistente de Bienestar Alimenticio",
+    "description": "Bot educativo que promueve una alimentación consciente, emocionalmente saludable y adaptada a las necesidades de cada persona.",
+    "contact": "info@bienestar-ia.com"
+  },
+
+  "topics": {
+    "emociones": ["ansiedad", "estrés", "frustración", "motivación", "culpa"],
+    "alimentacion": ["hidratarse", "comidas balanceadas", "descanso", "organización de horarios", "evitar el exceso de azúcar"],
+    "bienestar": ["autocuidado", "descanso", "ejercicio", "respiración consciente"]
+  },
+
+  "recomendaciones": {
+    "ansiedad": [
+      "Tomate unos minutos para respirar y tomar agua. Evitá comer por impulso 🍵",
+      "La ansiedad no se calma comiendo, sino entendiendo lo que sentís 💛",
+      "Probá distraerte con algo que te guste antes de abrir la heladera 🎧"
+    ],
+    "estrés": [
+      "Dale un descanso a tu mente. Una caminata corta o una infusión pueden ayudarte 🌿",
+      "El estrés muchas veces se siente en el cuerpo. Hacé una pausa consciente 🧘‍♀️",
+      "Respirá profundo y pensá: 'esto también va a pasar' 💨"
+    ],
+    "frustración": [
+      "Cada pequeño cambio cuenta. No busques perfección, buscá constancia 💪",
+      "No todo tiene que salir bien para que estés avanzando 🚶‍♂️",
+      "Comer no es fallar. Aprender también es parte del proceso 🌱"
+    ],
+    "motivación": [
+      "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗",
+      "Seguí así, estás construyendo hábitos que te van a hacer sentir bien 🌞",
+      "Motivarte hoy es cuidar de vos mañana 💫"
+    ],
+    "culpa": [
+      "No te castigues por lo que comiste. Enfocate en cómo querés sentirte mañana 🌻",
+      "Tu valor no se mide por una comida. Se mide por cómo te tratás 💛",
+      "Perdonarte también es parte del bienestar 🕊️"
+    ],
+    "hidratarse": [
+      "Tomar agua es esencial para el bienestar físico y mental 💧",
+      "Llevá siempre tu botella. A veces el cuerpo pide agua, no comida 🫗"
+    ],
+    "comidas balanceadas": [
+      "Combiná proteínas, fibras y carbohidratos complejos para mantener tu energía 🍎",
+      "Agregar color a tu plato es sumar nutrientes 🌈"
+    ],
+    "descanso": [
+      "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
+      "El descanso también es parte de una vida saludable 🌙"
+    ],
+    "autocuidado": [
+      "Escuchar tu cuerpo también es una forma de alimentarte bien 💛",
+      "Dedicarte tiempo a vos es invertir en tu salud 🌻"
+    ]
+  }
+}

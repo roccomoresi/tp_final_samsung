@@ -1,47 +1,46 @@
-# src/analysis/habit_recommender.py
-from groq import Groq
-from utils.memory_manager import get_user_history, add_message
-import os
-from dotenv import load_dotenv
+"""
+habit_recommender.py
+--------------------
+Genera recomendaciones personalizadas basadas en el sentimiento detectado
+y la información del dataset.json.
+"""
 
-load_dotenv()
-groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+import random
 
-def generar_recomendacion(texto: str, sentimiento: str, user_id: int) -> str:
+
+def generar_recomendacion(texto, sentimiento, user_id, dataset=None):
     """
-    Genera una recomendación personalizada combinando:
-    - texto del usuario
-    - su emoción detectada
-    - historial de conversación
+    Genera una recomendación personalizada basada en el sentimiento detectado
+    y la información del dataset.json.
     """
-    history = get_user_history(user_id)
-    add_message(user_id, "user", texto)
+    if dataset is None:
+        return "⚠️ No se pudo acceder a los datos de recomendaciones."
 
-    tono = {
-        "POS": "El usuario se siente positivo y motivado 😄. Reforzá hábitos saludables y metas nuevas.",
-        "NEG": "El usuario se siente decaído o frustrado 😔. Sé empático y alentador, ofrecé pasos pequeños.",
-        "NEU": "El usuario está neutro 😐. Usá un tono tranquilo y profesional, proponé algo equilibrado."
-    }.get(sentimiento, "El usuario tiene un estado emocional neutro.")
+    # Obtener todas las recomendaciones disponibles
+    recomendaciones = dataset.get("recomendaciones", {})
 
-    system_prompt = f"""
-Sos un coach virtual de bienestar y alimentación consciente 🍎.
-Tu misión es ayudar al usuario a mejorar sus hábitos alimenticios y emocionales.
+    # Buscar si alguna palabra clave del texto coincide con las del dataset
+    texto_lower = texto.lower()
+    for clave in recomendaciones.keys():
+        if clave in texto_lower:
+            respuestas = recomendaciones[clave]
+            if isinstance(respuestas, list):
+                return random.choice(respuestas)
+            else:
+                return respuestas
 
-Indicaciones:
-- Sé empático, cálido y motivador.
-- Basate en su estado emocional: {tono}
-- Respondé con consejos prácticos y personalizados.
-- Usá lenguaje natural, cercano y con emojis relacionados a salud y comida.
-- No des consejos médicos; solo hábitos saludables y motivación.
-    """
+    # Si no hay coincidencia directa, usar el sentimiento detectado
+    if sentimiento == "NEG":
+        posibles = ["ansiedad", "estrés", "frustración", "culpa"]
+    elif sentimiento == "POS":
+        posibles = ["motivación", "autocuidado"]
+    else:
+        posibles = ["descanso", "alimentacion", "bienestar"]
 
-    chat_completion = groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        temperature=0.6,
-        max_tokens=500,
-        messages=[{"role": "system", "content": system_prompt}] + history
-    )
+    # Elegir aleatoriamente entre esas claves disponibles
+    for clave in posibles:
+        if clave in recomendaciones:
+            return recomendaciones[clave]
 
-    respuesta = chat_completion.choices[0].message.content.strip()
-    add_message(user_id, "assistant", respuesta)
-    return respuesta
+    # Si no hay ninguna recomendación aplicable
+    return "🌱 Recordá que cada paso cuenta. Cuidarte también es escucharte 💛"

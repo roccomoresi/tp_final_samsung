@@ -1,52 +1,46 @@
 """
 sentiment_analysis.py
 ---------------------
-Análisis de sentimientos en español usando modelos preentrenados de Transformers.
-Detecta emociones básicas (positivo, negativo, neutro) a partir de texto.
+Analiza el sentimiento de un texto en español (positivo, negativo o neutro)
+usando un modelo preentrenado de Hugging Face.
+
+Modelo: pysentimiento/robertuito-sentiment-analysis
 """
 
 from transformers import pipeline
 
-# Crear el pipeline de análisis de sentimientos (modelo multilingüe)
-# Este modelo funciona bien para textos en español.
-analizador = pipeline(
-    "sentiment-analysis",
-    model="nlptown/bert-base-multilingual-uncased-sentiment"
-)
+# Inicializamos el modelo solo una vez
+print("🧠 Cargando modelo de análisis de sentimientos...")
+analizador = pipeline("sentiment-analysis", model="pysentimiento/robertuito-sentiment-analysis")
 
-def analizar_sentimiento(texto: str) -> str:
+def analizar_sentimiento(texto: str):
     """
-    Analiza el sentimiento de un texto y devuelve una etiqueta simple:
-    "positivo", "negativo" o "neutro".
+    Analiza el sentimiento de una frase en español.
+
+    Parámetros:
+        texto (str): Texto a analizar.
+
+    Retorna:
+        str: Etiqueta del sentimiento ('POS', 'NEG' o 'NEU').
     """
-    if not texto or not texto.strip():
-        return "neutro"
+    try:
+        if not texto or texto.strip() == "":
+            return "NEU"
 
-    resultado = analizador(texto[:512])[0]  # recorte por límite del modelo
-    label = resultado["label"].lower()
-    score = resultado["score"]
+        resultado = analizador(texto[:512])[0]  # limitamos longitud por seguridad
+        label = resultado["label"].upper()
+        score = round(resultado["score"], 3)
 
-    # Este modelo devuelve etiquetas tipo "1 star" a "5 stars"
-    if "1" in label or "2" in label:
-        sentimiento = "negativo"
-    elif "3" in label:
-        sentimiento = "neutro"
-    else:
-        sentimiento = "positivo"
+        print(f"🩵 Sentimiento detectado: {label} ({score}) para texto: '{texto[:50]}...'")
 
-    print(f"[DEBUG] Texto: {texto}")
-    print(f"[DEBUG] Label: {label}, Score: {score:.2f}, Clasificado como: {sentimiento}")
+        # Normalizamos nombres
+        if "POS" in label:
+            return "POS"
+        elif "NEG" in label:
+            return "NEG"
+        else:
+            return "NEU"
 
-    return sentimiento
-
-
-if __name__ == "__main__":
-    # Ejemplo de prueba
-    frases = [
-        "Estoy muy feliz con mis hábitos nuevos!",
-        "No tengo energía para seguir con la dieta.",
-        "Hoy me siento normal, nada especial."
-    ]
-    for f in frases:
-        print(f"\nFrase: {f}")
-        print(f"Sentimiento: {analizar_sentimiento(f)}")
+    except Exception as e:
+        print(f"Error en analizar_sentimiento: {e}")
+        return "NEU"

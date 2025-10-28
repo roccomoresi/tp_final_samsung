@@ -1,0 +1,13 @@
+{
+  "5090077182": {
+    "sentimiento": "NEU",
+    "ultima_recomendacion": [
+      "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
+      "El descanso también es parte de una vida saludable 🌙"
+    ]
+  },
+  "999999": {
+    "sentimiento": "NEG",
+    "ultima_recomendacion": "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗"
+  }
+}

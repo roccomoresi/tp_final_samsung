@@ -4,3 +4,4 @@ groq
 requests
 transformers
 torch
+pip freeze | findstr matplotlib
