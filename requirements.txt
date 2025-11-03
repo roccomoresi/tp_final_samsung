@@ -4,6 +4,6 @@ groq
 requests
 transformers
 torch
-pip  
+pip 
 findstr 
 matplotlib
