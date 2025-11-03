@@ -12,6 +12,7 @@ import json
 import telebot as tlb
 from dotenv import load_dotenv
 from groq import Groq
+import base64
 
 # Importaciones del proyecto
 from analysis.sentiment_analysis import analizar_sentimiento
@@ -130,6 +131,8 @@ def handle_voice_message(message: tlb.types.Message):
     bot.send_chat_action(message.chat.id, "typing")
 
     texto = transcribir_audio(message)
+    print(f"🎧 Transcripción detectada: {texto}")
+
     if not texto:
         bot.reply_to(message, "❌ No pude entender el audio. Probá de nuevo por favor.")
         return
@@ -151,6 +154,78 @@ def handle_voice_message(message: tlb.types.Message):
     update_memory(user_id, sentimiento, respuesta)
     add_log(user_id, texto, sentimiento, respuesta)
     print(f"🧠 Memoria actualizada para {user_id}: {sentimiento}")
+
+
+
+    # ==============================
+# 🖼️ MANEJADOR DE IMÁGENES
+# ==============================
+
+@bot.message_handler(content_types=["photo"])
+def handle_photo_message(message: tlb.types.Message):
+    """Procesa imágenes enviadas por el usuario."""
+    bot.send_chat_action(message.chat.id, "typing")
+
+    try:
+        foto = message.photo[-1]  # la de mayor resolución
+        file_info = bot.get_file(foto.file_id)
+        archivo_descargado = bot.download_file(file_info.file_path)
+
+        imagen_base64 = imagen_a_base64(archivo_descargado)
+        if not imagen_base64:
+            bot.reply_to(message, "❌ No pude procesar la imagen.")
+            return
+
+        descripcion = describir_imagen_con_groq(imagen_base64)
+        if descripcion:
+            bot.reply_to(message, f"🖼️ *Descripción de la imagen:*\n\n{descripcion}", parse_mode="Markdown")
+        else:
+            bot.reply_to(message, "❌ No pude analizar la imagen. Intentá con otra.")
+    except Exception as e:
+        print(f"Error en handle_photo_message: {e}")
+        bot.reply_to(message, "⚠️ Ocurrió un error al analizar tu imagen.")
+
+
+
+    # ==============================
+# 🖼️ FUNCIÓN: IMAGEN → DESCRIPCIÓN
+# ==============================
+
+def imagen_a_base64(ruta_o_bytes_imagen):
+    """Convierte una imagen a base64."""
+    try:
+        if isinstance(ruta_o_bytes_imagen, bytes):
+            return base64.b64encode(ruta_o_bytes_imagen).decode("utf-8")
+        else:
+            with open(ruta_o_bytes_imagen, "rb") as img_file:
+                return base64.b64encode(img_file.read()).decode("utf-8")
+    except Exception as e:
+        print(f"Error al convertir imagen: {e}")
+        return None
+
+
+def describir_imagen_con_groq(imagen_base64):
+    """Envía la imagen a Groq Vision y devuelve una descripción."""
+    try:
+        completion = groq_client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Describe detalladamente esta imagen en español."},
+                        {"type": "image_url",
+                         "image_url": {"url": f"data:image/jpeg;base64,{imagen_base64}"}}
+                    ],
+                }
+            ],
+            temperature=0.7,
+            max_tokens=800,
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        print(f"Error al describir imagen: {e}")
+        return None
 
 
 # ==============================

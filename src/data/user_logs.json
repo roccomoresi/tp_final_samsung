@@ -243,5 +243,79 @@
     "mensaje": "Hoy me siento desanimado, necesito motivación.",
     "sentimiento": "NEG",
     "recomendacion": "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:25:42",
+    "mensaje": "me siento contento",
+    "sentimiento": "POS",
+    "recomendacion": [
+      "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗",
+      "Seguí así, estás construyendo hábitos que te van a hacer sentir bien 🌞",
+      "Motivarte hoy es cuidar de vos mañana 💫"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:25:55",
+    "mensaje": "me siento triste",
+    "sentimiento": "NEG",
+    "recomendacion": [
+      "Tomate unos minutos para respirar y tomar agua. Evitá comer por impulso 🍵",
+      "La ansiedad no se calma comiendo, sino entendiendo lo que sentís 💛",
+      "Probá distraerte con algo que te guste antes de abrir la heladera 🎧"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:26:08",
+    "mensaje": "me dirias que puedo comer?",
+    "sentimiento": "NEU",
+    "recomendacion": [
+      "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
+      "El descanso también es parte de una vida saludable 🌙"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:26:47",
+    "mensaje": " Hola, ¿Me escuchás lo que te digo?",
+    "sentimiento": "NEU",
+    "recomendacion": [
+      "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
+      "El descanso también es parte de una vida saludable 🌙"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:28:34",
+    "mensaje": " Hola, como estas?",
+    "sentimiento": "NEU",
+    "recomendacion": [
+      "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
+      "El descanso también es parte de una vida saludable 🌙"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:44:15",
+    "mensaje": "me siento bien",
+    "sentimiento": "POS",
+    "recomendacion": [
+      "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗",
+      "Seguí así, estás construyendo hábitos que te van a hacer sentir bien 🌞",
+      "Motivarte hoy es cuidar de vos mañana 💫"
+    ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-03 13:44:28",
+    "mensaje": "me siento mal",
+    "sentimiento": "NEG",
+    "recomendacion": [
+      "Tomate unos minutos para respirar y tomar agua. Evitá comer por impulso 🍵",
+      "La ansiedad no se calma comiendo, sino entendiendo lo que sentís 💛",
+      "Probá distraerte con algo que te guste antes de abrir la heladera 🎧"
+    ]
   }
 ]
