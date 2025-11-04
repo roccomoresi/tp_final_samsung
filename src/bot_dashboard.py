@@ -10,7 +10,7 @@ Requisitos:
 
 Uso:
 - Configurar .env con TELEGRAM_TOKEN y GROQ_API_KEY
-- Ejecutar: python Bot_mejorado_dashboard.py
+- Ejecutar: python bot_mejorado_dashboard.py
 
 """
 
@@ -893,3 +893,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
