@@ -172,7 +172,8 @@ DATASET = {
             "No te castigues por lo que comiste. Enfocate en cómo querés sentirte mañana 🌻",
             "Tu valor no se mide por una comida. Se mide por cómo te tratás 💛",
             "Perdonarte también es parte del bienestar 🕊️",
-            "Centrate en la versión que querés ser, no en los errores del pasado 🌟"
+            "Centrate en la versión que querés ser, no en los errores del pasado 🌟",
+            "Recordá: un día a la vez."
         ],
         "tristeza": [
             "Está bien sentirse triste. No tenés que estar siempre perfecto 🌧️",
@@ -893,4 +894,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
 
