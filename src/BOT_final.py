@@ -290,6 +290,29 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
     return random.choice(DATASET["respuestas_generales"])
 
 # ============================================================================
+#  PALABRAS CLAVE PARA DETECCIÓN MANUAL DE EMOCIONES
+# ============================================================================
+
+KEYWORDS = {
+    "ansiedad": ["ansiosa", "ansioso", "nerviosa", "nervioso", "me da ansiedad", "angustia"],
+    "estrés": ["estresada", "estresado", "agotada", "agotado", "tensión", "presionada", "presionado", "mucho para estudiar", "mucho trabajo"],
+    "frustración": ["frustrada", "frustrado", "desanimada", "desanimado", "no puedo", "me sale mal"],
+    "culpa": ["culpa", "me siento mal por comer", "no debí", "me arrepiento"],
+    "tristeza": ["triste", "bajón", "sin ganas", "mal día", "deprimida", "deprimido"],
+    "motivación": ["motivado", "motivada", "con ganas", "feliz", "entusiasmado", "energía"],
+    "aburrimiento": ["aburrida", "aburrido", "me aburro", "nada para hacer", "estoy embolada", "estoy embolado", "no tengo ganas", "todo me aburre"]
+}
+
+def detectar_emocion_por_palabras(texto: str) -> str:
+    texto = texto.lower()
+    for emocion, palabras in KEYWORDS.items():
+        for palabra in palabras:
+            if palabra in texto:
+                return emocion
+    return None
+
+
+# ============================================================================
 # 3. AUDIO -> TEXTO (Speech-to-Text)
 # ============================================================================
 
@@ -644,24 +667,48 @@ def cmd_dashboard(message: tlb.types.Message):
 
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
+    user_id = message.from_user.id
     user_input = message.text.lower()
 
-    # Detección de intención: BAJAR DE PESO
+    # --- 1️⃣ Detectar emoción directamente mediante palabras clave ---
+    emocion_detectada = detectar_emocion_por_palabras(user_input)
+    if emocion_detectada:
+        respuestas = DATASET["recomendaciones"].get(emocion_detectada, [])
+        if respuestas:
+            respuesta = random.choice(respuestas)
+            bot.reply_to(
+                message,
+                f"🧠 *Detecté que estás sintiendo {emocion_detectada}.*\n\n{respuesta}",
+                parse_mode="Markdown"
+            )
+            sentimiento = "NEG" if emocion_detectada in ["ansiedad", "estrés", "culpa", "frustración", "tristeza", "aburrimiento"] else "POS"
+            actualizar_memoria(user_id, sentimiento, respuesta)
+            agregar_log(user_id, f"[TEXTO] {user_input}", sentimiento, respuesta)
+            save_interaction(user_id, 'text', user_input, sentimiento, None, None, respuesta)
+            return
+
+    # --- 2️⃣ Detección de intenciones específicas (peso y músculo) ---
     if any(palabra in user_input for palabra in ["bajar de peso", "adelgazar", "perder grasa", "rebajar", "dietas", "definir"]):
         respuesta = random.choice(DATASET["recomendaciones"]["bajar_peso"])
-        bot.reply_to(message, f" *Consejo para bajar de peso:*\n\n{respuesta}", parse_mode="Markdown")
+        bot.reply_to(message, f"🍎 *Consejo para bajar de peso:*\n\n{respuesta}", parse_mode="Markdown")
+        actualizar_memoria(user_id, "POS", respuesta)
+        save_interaction(user_id, 'text', user_input, "POS", None, None, respuesta)
         return
 
-    # Detección de intención: AUMENTAR MASA MUSCULAR
     if any(palabra in user_input for palabra in ["ganar músculo", "masa muscular", "aumentar masa", "volumen", "subir de peso saludable"]):
         respuesta = random.choice(DATASET["recomendaciones"]["masa_muscular"])
         bot.reply_to(message, f"💪 *Consejo para aumentar masa muscular:*\n\n{respuesta}", parse_mode="Markdown")
+        actualizar_memoria(user_id, "POS", respuesta)
+        save_interaction(user_id, 'text', user_input, "POS", None, None, respuesta)
         return
 
-    # Si no coincide con ninguna intención específica, seguí con el flujo normal:
-    respuesta_general = random.choice(DATASET["respuestas_generales"])
-    bot.reply_to(message, respuesta_general, parse_mode="Markdown")
-
+    #  Si no hay emoción ni intención clara, usar el modelo de sentimiento 
+    sentimiento = analizar_sentimiento(user_input)
+    respuesta = generar_recomendacion(user_input, sentimiento)
+    bot.reply_to(message, respuesta)
+    actualizar_memoria(user_id, sentimiento, respuesta)
+    agregar_log(user_id, f"[TEXTO] {user_input}", sentimiento, respuesta)
+    save_interaction(user_id, 'text', user_input, sentimiento, None, None, respuesta)
 
 @bot.message_handler(content_types=["voice"])
 def handle_voice(message: tlb.types.Message):
@@ -741,5 +788,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
 
 
