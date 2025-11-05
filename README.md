@@ -31,7 +31,7 @@ El bot cuenta con una base de datos SQLite que almacena toda tu información de 
 - Python 3.10 o superior
 - Cuenta de Telegram
 - API Token de Telegram Bot (obtener de [@BotFather](https://t.me/botfather))
-- API Key de Groq (opcional, para funciones avanzadas)
+- API Key de Groq 
 
 ### 1. Clonar el repositorio
 
