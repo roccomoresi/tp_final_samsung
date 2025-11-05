@@ -278,7 +278,7 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
         if clave in texto_lower:
             return random.choice(respuestas)
     if sentimiento == "NEG":
-        posibles = ["ansiedad", "estrés", "frustración", "culpa", "tristeza"]
+        posibles = ["ansiedad", "estrés", "frustración", "culpa", "tristeza", "aburrimiento"]
     elif sentimiento == "POS":
         posibles = ["motivación"]
     else:
@@ -741,4 +741,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
 
