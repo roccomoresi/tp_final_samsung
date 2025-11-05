@@ -197,6 +197,19 @@ DATASET = {
             "Hoy podés descansar un poco más. Mañana vas a estar mejor 🌙",
             "Comé liviano y con calma, tu cuerpo también necesita contención 🍲"
         ],
+        "aburrimiento": [
+            "El aburrimiento puede ser una oportunidad para descubrir algo nuevo que te apasione 🎨",
+            "A veces el cuerpo pide movimiento cuando la mente se aburre. Probá salir a caminar o estirarte un poco 🚶‍♀️",
+            "Podés aprovechar este momento para probar una receta saludable o aprender algo distinto 🍲",
+            "El aburrimiento no siempre es malo: puede ser una pausa que tu mente necesita para descansar 🌿",
+            "¿Qué tal si convertís ese aburrimiento en un pequeño reto personal? Prepará una comida colorida o escribí cómo te sentís 💛",
+            "Cuando sientas aburrimiento, hacé algo que te conecte con vos, aunque sea preparar una infusión rica ☕",
+            "No busques llenar el aburrimiento con comida. Probá música, dibujo o movimiento 🎧🧘‍♀️",
+            "A veces el aburrimiento es solo una señal de que necesitás un cambio de foco, no de comida 🔄",
+            "Tu cuerpo no tiene hambre, tiene ganas de estímulo. Regalate una pausa consciente o algo que te inspire 🌸",
+            "Transformá el aburrimiento en curiosidad: leé algo breve, salí al sol o anotá una idea que te motive ☀️"
+        ],
+
         "hidratarse": [
             "Tomar agua es esencial para el bienestar físico y mental 💧",
             "Llevá siempre tu botella. A veces el cuerpo pide agua, no comida 🫗",
@@ -728,3 +741,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
