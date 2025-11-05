@@ -135,6 +135,7 @@ tp_final_samsung/
 ├── README.md            # Este archivo
 └── src/
     ├── BOT_final.py      # Script principal del bot
+    ├── DASHBOARD         # Ejemplo de como se ve un dashboard otorgado en Telegram
 └── data/
     ├── user_memory.json # Memoria contextual de usuarios
     ├── user_logs.json   # Logs de interacciones
