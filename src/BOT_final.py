@@ -767,6 +767,7 @@ def mostrar_ayuda(message):
         "👋 *Saludos y despedidas:* Puedo responder de forma amable cuando me saludás o te despedís.\n\n"
         "🍎 *Recomendaciones de bienestar:* Te doy consejos prácticos sobre descanso, hidratación, autoestima y rutina.\n\n"
         "🥗 *Recetas saludables:* Si me pedís una receta o mencionás una categoría (desayuno, almuerzo, cena, merienda, ensalada o licuado), te muestro una opción equilibrada.\n\n"
+        "🎙️ *Transcripción de audios (Speech-to-Text):* Podés mandarme audios y los transcribo automáticamente. Luego analizo lo que dijiste y te doy una devolución emocional o una recomendación personalizada.\n\n"
         "📊 *Dashboard personalizado:* Si usás el comando /dashboard, genero un resumen con tu evolución emocional y tus hábitos alimentarios.\n\n"
         "🖼️ *Análisis de imágenes:* Si me enviás una foto de tu comida, puedo analizarla y darte una evaluación nutricional con consejos.\n\n"
         "⚙️ *Comandos útiles:*\n"
@@ -900,27 +901,78 @@ def handle_text(message):
 
 
 @bot.message_handler(content_types=["voice"])
-def handle_voice(message: tlb.types.Message):
-    user_id = message.from_user.id
-    bot.send_chat_action(message.chat.id, "typing")
-    bot.reply_to(message, "🎤 Escuchando tu audio...")
+def handle_audio(message):
     try:
+        user_id = message.from_user.id
         file_info = bot.get_file(message.voice.file_id)
-        audio_bytes = bot.download_file(file_info.file_path)
-        texto = speech_to_text(audio_bytes)
-        if not texto:
-            bot.send_message(message.chat.id, "❌ No pude entender el audio. Probá de nuevo.")
+        file_data = bot.download_file(file_info.file_path)
+
+        # --- Guardar temporalmente el audio ---
+        os.makedirs("data", exist_ok=True)
+        audio_path = f"data/audio_{user_id}.ogg"
+        with open(audio_path, "wb") as f:
+            f.write(file_data)
+
+        # --- 1️) Transcribir con Whisper ---
+        bot.reply_to(message, "🎧 Recibí tu audio. Transcribiéndolo...")
+
+        try:
+            from groq import Groq
+            client = Groq(api_key=os.getenv("CLAVE_API_GROQ"))
+            with open(audio_path, "rb") as audio_file:
+                response = client.audio.transcriptions.create(
+                    model="whisper-large-v3-turbo",
+                    file=audio_file
+                )
+            transcripcion = response.text.strip()
+        except Exception as e:
+            print(f"❌ Error al transcribir: {e}")
+            bot.reply_to(message, "⚠️ No pude transcribir tu audio. Probá hablar un poco más claro o más corto 🎙️")
             return
-        bot.send_message(message.chat.id, f"📝 Escuché: _{texto}_", parse_mode="Markdown")
-        sentimiento = analizar_sentimiento(texto)
-        respuesta = generar_recomendacion(texto, sentimiento)
-        bot.send_message(message.chat.id, respuesta)
+
+        # --- 2️) Mostrar transcripción al usuario ---
+        if not transcripcion:
+            bot.reply_to(message, "No pude entender tu audio 😔 Probá grabarlo nuevamente.")
+            return
+
+        bot.reply_to(
+            message,
+            f"📝 *Esto fue lo que entendí de tu audio:*\n\n_{transcripcion}_",
+            parse_mode="Markdown"
+        )
+
+        # --- 3️) Detectar emoción en la transcripción ---
+        emocion_detectada = detectar_emocion_por_palabras(transcripcion)
+
+        if emocion_detectada:
+            respuestas = DATASET["recomendaciones"].get(emocion_detectada, [])
+            if respuestas:
+                respuesta = random.choice(respuestas)
+                bot.reply_to(
+                    message,
+                    f"🧠 *Detecté {emocion_detectada} en tu voz.*\n\n{respuesta}",
+                    parse_mode="Markdown"
+                )
+                sentimiento = "NEG" if emocion_detectada in ["ansiedad", "estrés", "culpa", "frustración", "tristeza", "aburrimiento"] else "POS"
+                actualizar_memoria(user_id, sentimiento, respuesta)
+                save_interaction(user_id, 'audio', transcripcion, sentimiento, None, None, respuesta)
+                return
+
+        # --- 4️) Si no se detecta emoción directa, usar el modelo de sentimiento ---
+        sentimiento = analizar_sentimiento(transcripcion)
+        respuesta = generar_recomendacion(transcripcion, sentimiento)
+
+        bot.reply_to(
+            message,
+            f"💬 *Reflexión MENTA:*\n\n{respuesta}",
+            parse_mode="Markdown"
+        )
         actualizar_memoria(user_id, sentimiento, respuesta)
-        agregar_log(user_id, f"[VOZ] {texto}", sentimiento, respuesta)
-        save_interaction(user_id, 'voice', texto, sentimiento, None, None, respuesta)
+        save_interaction(user_id, 'audio', transcripcion, sentimiento, None, None, respuesta)
+
     except Exception as e:
-        print(f"❌ Error procesando voz: {e}")
-        bot.send_message(message.chat.id, "⚠️ Hubo un error con el audio.")
+        print(f"❌ Error procesando audio: {e}")
+        bot.reply_to(message, "Hubo un error al procesar tu audio 😔 Intentá nuevamente.")
 
 
 @bot.message_handler(content_types=["photo"])
@@ -977,3 +1029,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
