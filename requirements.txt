@@ -1,10 +1,11 @@
-python-dotenv
-pyTelegramBotAPI
-groq
-requests
-transformers
-torch
-pip 
-findstr 
-matplotlib
-html2image
+
+python-dotenv==1.0.1
+pyTelegramBotAPI==4.14.0
+groq==0.5.0
+transformers==4.44.2
+torch==2.2.2
+matplotlib==3.8.4
+pandas==2.2.2
+numpy==1.26.4
+html2image ==2.2.2
+
