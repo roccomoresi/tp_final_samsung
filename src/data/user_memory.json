@@ -1,15 +1,15 @@
 {
   "5090077182": {
     "sentimiento": "NEG",
-    "ultima_recomendacion": "Un día productivo también puede incluir una siesta reparadora ☀️",
-    "total_interacciones": 8,
+    "ultima_recomendacion": "Podés mejorar esta comida agregando una fuente de grasas saludables, como un poco de aceite de oliva, y eligiendo opciones más magras para las albóndigas. ¡Disfruta!",
+    "total_interacciones": 13,
     "estadisticas": {
-      "positivos": 0,
-      "negativos": 2,
+      "positivos": 3,
+      "negativos": 4,
       "neutros": 6
     },
-    "ultima_interaccion": "2025-11-06T11:31:40.242112",
-    "sentimiento_actual": "NEU"
+    "ultima_interaccion": "2025-11-06T12:17:19.411146",
+    "sentimiento_actual": "POS"
   },
   "999999": {
     "sentimiento": "NEG",

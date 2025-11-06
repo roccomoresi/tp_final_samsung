@@ -7,3 +7,4 @@ torch
 pip 
 findstr 
 matplotlib
+html2image

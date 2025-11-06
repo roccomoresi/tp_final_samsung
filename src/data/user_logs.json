@@ -373,5 +373,40 @@
     "mensaje": "[VOZ]  Hola ¿Qué puedo comer hoy?",
     "sentimiento": "NEU",
     "respuesta": "Un día productivo también puede incluir una siesta reparadora ☀️"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:35:55",
+    "mensaje": "[VOZ]  Comí un sándwich y me siento con culpa",
+    "sentimiento": "NEG",
+    "respuesta": "No te castigues por lo que comiste. Enfocate en cómo querés sentirte mañana 🌻"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 12:11:44",
+    "mensaje": "[FOTO] pollo a la plancha, ensalada de arugula, col morada, aguacate, limón, tomates cherry, pepino,",
+    "sentimiento": "POS",
+    "respuesta": "🍽️ *Análisis de tu comida:*\n\n📋 *Identificado:* pollo a la plancha, ensalada de arugula, col morada, "
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 12:16:45",
+    "mensaje": "[TEXTO] hola hoy me siento contento",
+    "sentimiento": "POS",
+    "respuesta": "Transformá esa motivación en acción, incluso si el paso es chiquito 👣"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 12:16:57",
+    "mensaje": "[TEXTO] hoy me siento de la mierda",
+    "sentimiento": "NEG",
+    "respuesta": "Este proceso enfocalo un día a la vez. No te exijas perfección 🌟"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 12:17:19",
+    "mensaje": "[FOTO] puré de papas, brócoli, albóndigas",
+    "sentimiento": "POS",
+    "respuesta": "🍽️ *Análisis de tu comida:*\n\n📋 *Identificado:* puré de papas, brócoli, albóndigas\n\n⚖️ *Evaluación:* "
   }
 ]

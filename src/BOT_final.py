@@ -28,9 +28,12 @@ from groq import Groq
 from transformers import pipeline
 import random
 
+
+
 # Visualización
 import matplotlib.pyplot as plt
 import pandas as pd
+from html2image import Html2Image
 
 # ============================================================================
 # CONFIGURACIÓN INICIAL
@@ -487,18 +490,13 @@ def agregar_log(user_id: int, mensaje: str, sentimiento: str, respuesta: str):
 # ============================================================================
 
 def generate_dashboard_html(user_id):
-    """
-    Genera un dashboard HTML con gráficos embebidos en base64.
-    No requiere archivos de imagen externos.
-    """
+    """Genera un dashboard HTML y guarda los tres gráficos individuales."""
     import matplotlib.dates as mdates
 
-    # Creo carpeta donde guardar el dashboard 
     dashboard_dir = "data/dashboard"
     os.makedirs(dashboard_dir, exist_ok=True)
     output_path = os.path.join(dashboard_dir, f"{user_id}_dashboard.html")
 
-    # Conectamos la base de datos 
     db_path = "data/menta.db"
     if not os.path.exists(db_path):
         print("⚠️ No hay base de datos. Generá interacciones antes de usar /dashboard.")
@@ -514,38 +512,37 @@ def generate_dashboard_html(user_id):
             f.write(html)
         return output_path
 
-    # Función auxiliar para convertir imagen en base64 
-    def fig_to_base64(fig):
+    # ---------------------------
+    # Función auxiliar
+    # ---------------------------
+    def fig_to_base64_and_save(fig, path):
+        """Convierte figura a base64 y la guarda en archivo PNG."""
         buffer = io.BytesIO()
         fig.savefig(buffer, format="png", bbox_inches="tight")
+        fig.savefig(path, bbox_inches="tight")
         buffer.seek(0)
         img_b64 = base64.b64encode(buffer.read()).decode("utf-8")
         plt.close(fig)
         return img_b64
 
-    # --- Gráfico 1: Evolución del estado emocional ---
-    fig1, ax1 = plt.subplots(figsize=(7, 4))
     df["fecha"] = pd.to_datetime(df["timestamp"])
     df = df.sort_values("fecha")
 
-    # Convertir sentimientos en valores numéricos
+    # --- Gráfico 1: Evolución emocional ---
+    fig1, ax1 = plt.subplots(figsize=(7, 4))
     df["sentimiento_num"] = df["sentimiento"].map({"NEG": -1, "NEU": 0, "POS": 1})
-
-    # Graficar la evolución
     ax1.plot(df["fecha"], df["sentimiento_num"], marker="o", linewidth=2, color="#2a7c4e")
     ax1.set_title("Evolución del estado emocional")
     ax1.set_xlabel("Fecha")
     ax1.set_ylabel("Nivel de emoción (-1 Negativo / +1 Positivo)")
-
-    # Rotar fechas y mostrar menos ticks para no amontonarlas
     ax1.xaxis.set_major_locator(mdates.AutoDateLocator())
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d-%m"))
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-
-    mood_b64 = fig_to_base64(fig1)
+    mood_b64 = fig_to_base64_and_save(fig1, os.path.join(dashboard_dir, f"{user_id}_fig1_emocional.png"))
 
     # --- Gráfico 2: Frecuencia por evaluación de comidas ---
+    food_b64 = ""
     if "evaluacion" in df.columns and not df["evaluacion"].isna().all():
         evaluaciones = df["evaluacion"].value_counts()
         fig2, ax2 = plt.subplots()
@@ -553,57 +550,94 @@ def generate_dashboard_html(user_id):
         ax2.set_title("Frecuencia por evaluación de comidas")
         ax2.set_xlabel("Tipo de comida")
         ax2.set_ylabel("Cantidad")
-        food_b64 = fig_to_base64(fig2)
-    else:
-        food_b64 = ""
+        plt.tight_layout()
+        food_b64 = fig_to_base64_and_save(fig2, os.path.join(dashboard_dir, f"{user_id}_fig2_comidas.png"))
 
     # --- Gráfico 3: Recomendaciones más frecuentes ---
+    recs_b64 = ""
     if "recomendacion" in df.columns and not df["recomendacion"].isna().all():
         top_recs = df["recomendacion"].value_counts().head(10)
         fig3, ax3 = plt.subplots()
         ax3.barh(top_recs.index[::-1], top_recs.values[::-1], color="skyblue")
         ax3.set_title("Recomendaciones más frecuentes")
         ax3.set_xlabel("Cantidad de veces")
-        recs_b64 = fig_to_base64(fig3)
-    else:
-        recs_b64 = ""
+        plt.tight_layout()
+        recs_b64 = fig_to_base64_and_save(fig3, os.path.join(dashboard_dir, f"{user_id}_fig3_recomendaciones.png"))
 
-    # Crea el HTML final con las imágenes embebidas 
+    # ---------------------------
+    # HTML final
+    # ---------------------------
     html = f"""
-    <html>
+    <html lang="es">
     <head>
         <meta charset="utf-8">
-        <title>Dashboard - Usuario {user_id}</title>
+        <title>Dashboard de Bienestar - Usuario {user_id}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-            body {{ font-family: Arial, sans-serif; margin: 40px; background: #fafafa; color: #333; }}
-            h2 {{ color: #2a7c4e; }}
-            h3 {{ color: #444; margin-top: 40px; }}
-            img {{ display: block; margin-top: 10px; margin-bottom: 30px; max-width: 700px;
-                  border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }}
+            body {{
+                font-family: 'Poppins', sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(180deg, #f9fdfb 0%, #e6f1eb 100%);
+                color: #2a2a2a;
+            }}
+            header {{
+                background-color: #2a7c4e;
+                color: white;
+                padding: 20px 40px;
+                text-align: center;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            }}
+            header h1 {{ margin: 0; font-size: 26px; letter-spacing: 1px; }}
+            .container {{
+                max-width: 960px; margin: 40px auto;
+                background: white; border-radius: 16px;
+                padding: 30px 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }}
+            h2 {{ color: #2a7c4e; margin-top: 0; }}
+            section {{ margin-bottom: 50px; }}
+            .chart {{ text-align: center; }}
+            img {{
+                display: block; margin: 0 auto 20px auto;
+                max-width: 100%; border-radius: 10px;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            }}
+            .no-data {{ color: #888; text-align: center; font-style: italic; }}
+            footer {{ text-align: center; padding: 20px; font-size: 13px; color: #666; }}
         </style>
     </head>
     <body>
-        <h2>Dashboard - Usuario {user_id}</h2>
-        
-        <h3>Evolución del estado emocional</h3>
-        {'<img src="data:image/png;base64,' + mood_b64 + '">' if mood_b64 else '<p>No hay datos emocionales suficientes.</p>'}
-
-        <h3>Frecuencia por evaluación de comidas</h3>
-        {'<img src="data:image/png;base64,' + food_b64 + '">' if food_b64 else '<p>No hay datos de comidas suficientes.</p>'}
-
-        <h3>Recomendaciones más frecuentes</h3>
-        {'<img src="data:image/png;base64,' + recs_b64 + '">' if recs_b64 else '<p>No hay recomendaciones registradas.</p>'}
+        <header><h1>🌱 Dashboard de Bienestar - Usuario {user_id}</h1></header>
+        <div class="container">
+            <section>
+                <h2>Evolución emocional</h2>
+                <div class="chart">
+                    {'<img src="data:image/png;base64,' + mood_b64 + '">' if mood_b64 else '<p class="no-data">Sin datos.</p>'}
+                </div>
+            </section>
+            <section>
+                <h2>Evaluación de comidas</h2>
+                <div class="chart">
+                    {'<img src="data:image/png;base64,' + food_b64 + '">' if food_b64 else '<p class="no-data">Sin registros de comidas.</p>'}
+                </div>
+            </section>
+            <section>
+                <h2>Recomendaciones más frecuentes</h2>
+                <div class="chart">
+                    {'<img src="data:image/png;base64,' + recs_b64 + '">' if recs_b64 else '<p class="no-data">Sin recomendaciones.</p>'}
+                </div>
+            </section>
+        </div>
+        <footer>MentaBot 🌿 · Bienestar alimenticio y emocional · Generado automáticamente</footer>
     </body>
     </html>
     """
 
-    # --- Guardar el archivo HTML ---
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"✅ Dashboard generado: {output_path}")
+    print(f"✅ Dashboard y gráficos guardados para usuario {user_id}")
     return output_path
-
 
 # ============================================================================
 # 8. MANEJADORES DEL BOT
@@ -643,23 +677,49 @@ def cmd_progreso(message: tlb.types.Message):
         resumen += "🌱 Estoy acá para ayudarte. Juntos vamos a mejorar."
     bot.reply_to(message, resumen, parse_mode="Markdown")
 
-
 @bot.message_handler(commands=["dashboard"])
 def cmd_dashboard(message: tlb.types.Message):
     user_id = message.from_user.id
-    bot.send_chat_action(message.chat.id, "upload_document")
+    bot.send_chat_action(message.chat.id, "upload_photo")
+
     try:
+        # 1️⃣ Generar HTML (para mantener consistencia, aunque no se use)
         html_path = generate_dashboard_html(user_id)
-        # enviar archivo HTML y las imagenes generadas
-        folder = os.path.dirname(html_path)
-        files_to_send = [html_path]
-        # incluir imagenes png generados para el usuario
-        for fname in os.listdir(folder):
-            if fname.startswith(str(user_id)) and (fname.endswith('.png') or fname.endswith('.html')):
-                files_to_send.append(os.path.join(folder, fname))
-        # Enviar html como documento
-        with open(html_path, 'rb') as f:
-            bot.send_document(message.chat.id, f, caption='Dashboard generado (abrir en navegador)')
+        if not html_path:
+            bot.reply_to(message, "⚠️ No hay datos suficientes para generar el dashboard.")
+            return
+
+        # 2️⃣ Buscar los gráficos ya guardados en el directorio (fig1, fig2, fig3)
+        dashboard_dir = "data/dashboard"
+        user_files = [
+            f for f in os.listdir(dashboard_dir)
+            if f.startswith(str(user_id)) and f.endswith(".png")
+        ]
+
+        if not user_files:
+            bot.reply_to(message, "⚠️ No se encontraron gráficos generados para este usuario.")
+            return
+
+        # 3️⃣ Enviar cada gráfico como una foto separada
+        for file_name in sorted(user_files):
+            file_path = os.path.join(dashboard_dir, file_name)
+            caption = ""
+            if "emotional" in file_name.lower() or "fig1" in file_name.lower():
+                caption = "📈 Evolución emocional"
+            elif "comida" in file_name.lower() or "fig2" in file_name.lower():
+                caption = "🍽️ Evaluación de comidas"
+            elif "recomendaciones" in file_name.lower() or "fig3" in file_name.lower():
+                caption = "💬 Recomendaciones más frecuentes"
+
+            with open(file_path, "rb") as img:
+                bot.send_photo(message.chat.id, img, caption=caption)
+
+        bot.reply_to(
+            message,
+            "✅ Dashboard completo enviado 🌿",
+            parse_mode="Markdown"
+        )
+
     except Exception as e:
         print(f"❌ Error generando dashboard: {e}")
         bot.send_message(message.chat.id, "⚠️ No se pudo generar el dashboard.")
