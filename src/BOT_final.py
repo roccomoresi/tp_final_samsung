@@ -292,6 +292,61 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
             return random.choice(respuestas) if isinstance(respuestas, list) else respuestas
     return random.choice(DATASET["respuestas_generales"])
 
+
+
+# ============================================================================
+# DATASETS DE SALUDOS Y DESPEDIDAS
+# ============================================================================
+
+DATASET["saludos"] = {
+    "patrones": ["hola", "buen día", "buenas", "buenas tardes", "buenas noches", "hey", "holis", "qué tal"],
+    "respuestas": [
+        "🌱 ¡Hola! Qué alegría verte por acá 💚 ¿Cómo te sentís hoy?",
+        "👋 ¡Hola! Espero que estés teniendo un día tranquilo ☀️",
+        "💫 ¡Hola! ¿Cómo te está yendo hoy? Contame un poco 🌿",
+        "🍀 ¡Buen día! Me alegra volver a charlar con vos 😊"
+    ]
+}
+
+DATASET["despedidas"] = {
+    "patrones": ["chau", "adiós", "nos vemos", "hasta luego", "me voy", "hasta pronto", "bye", "nos hablamos"],
+    "respuestas": [
+        "🌷 ¡Hasta luego! Cuidate mucho 💚",
+        "💤 ¡Nos vemos! Que descanses y te hidrates bien 💧",
+        "🌿 ¡Adiós! Recordá escucharte y comer con calma 🍽️",
+        "💫 ¡Hasta la próxima! Me encantó acompañarte hoy 🌻"
+    ]
+}
+
+
+# ============================================================================
+# FUNCIONES DE DETECCIÓN DE SALUDOS Y DESPEDIDAS
+# ============================================================================
+
+def detectar_saludo(texto: str) -> bool:
+    texto_lower = texto.lower().strip()
+    for patron in DATASET["saludos"]["patrones"]:
+        if patron in texto_lower:
+            palabras = texto_lower.split()
+            if len(palabras) <= 5 or texto_lower.startswith(patron):
+                return True
+    return False
+
+def detectar_despedida(texto: str) -> bool:
+    texto_lower = texto.lower().strip()
+    for patron in DATASET["despedidas"]["patrones"]:
+        if patron in texto_lower:
+            palabras = texto_lower.split()
+            if len(palabras) <= 6 or texto_lower.startswith(patron):
+                return True
+    return False
+
+def generar_saludo() -> str:
+    return random.choice(DATASET["saludos"]["respuestas"])
+
+def generar_despedida() -> str:
+    return random.choice(DATASET["despedidas"]["respuestas"])
+
 # ============================================================================
 #  PALABRAS CLAVE PARA DETECCIÓN MANUAL DE EMOCIONES
 # ============================================================================
@@ -728,9 +783,25 @@ def cmd_dashboard(message: tlb.types.Message):
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
     user_id = message.from_user.id
-    user_input = message.text.lower()
+    user_input = message.text.lower().strip()
 
-    # --- 1️⃣ Detectar emoción directamente mediante palabras clave ---
+    # --- 1️) Detectar saludos ---
+    if detectar_saludo(user_input):
+        respuesta = generar_saludo()
+        bot.reply_to(message, respuesta, parse_mode="Markdown")
+        actualizar_memoria(user_id, "POS", respuesta)
+        save_interaction(user_id, 'text', user_input, "POS", None, None, respuesta)
+        return
+
+    # --- 2️) Detectar despedidas ---
+    if detectar_despedida(user_input):
+        respuesta = generar_despedida()
+        bot.reply_to(message, respuesta, parse_mode="Markdown")
+        actualizar_memoria(user_id, "NEU", respuesta)
+        save_interaction(user_id, 'text', user_input, "NEU", None, None, respuesta)
+        return
+
+    # --- 3️) Detectar emoción mediante palabras clave ---
     emocion_detectada = detectar_emocion_por_palabras(user_input)
     if emocion_detectada:
         respuestas = DATASET["recomendaciones"].get(emocion_detectada, [])
@@ -738,7 +809,7 @@ def handle_text(message):
             respuesta = random.choice(respuestas)
             bot.reply_to(
                 message,
-                f"🧠 *Detecté que estás sintiendo {emocion_detectada}.*\n\n{respuesta}",
+                f"🧠 Detecté que estás sintiendo *{emocion_detectada}*.\n\n{respuesta}",
                 parse_mode="Markdown"
             )
             sentimiento = "NEG" if emocion_detectada in ["ansiedad", "estrés", "culpa", "frustración", "tristeza", "aburrimiento"] else "POS"
@@ -747,7 +818,7 @@ def handle_text(message):
             save_interaction(user_id, 'text', user_input, sentimiento, None, None, respuesta)
             return
 
-    # --- 2️⃣ Detección de intenciones específicas (peso y músculo) ---
+    # --- 4️) Detección de intenciones específicas (peso y músculo) ---
     if any(palabra in user_input for palabra in ["bajar de peso", "adelgazar", "perder grasa", "rebajar", "dietas", "definir"]):
         respuesta = random.choice(DATASET["recomendaciones"]["bajar_peso"])
         bot.reply_to(message, f"🍎 *Consejo para bajar de peso:*\n\n{respuesta}", parse_mode="Markdown")
@@ -762,13 +833,15 @@ def handle_text(message):
         save_interaction(user_id, 'text', user_input, "POS", None, None, respuesta)
         return
 
-    #  Si no hay emoción ni intención clara, usar el modelo de sentimiento 
+    # --- 5️) Si no hay coincidencia, usar el modelo de sentimiento ---
     sentimiento = analizar_sentimiento(user_input)
     respuesta = generar_recomendacion(user_input, sentimiento)
-    bot.reply_to(message, respuesta)
+    bot.reply_to(message, respuesta, parse_mode="Markdown")
     actualizar_memoria(user_id, sentimiento, respuesta)
     agregar_log(user_id, f"[TEXTO] {user_input}", sentimiento, respuesta)
     save_interaction(user_id, 'text', user_input, sentimiento, None, None, respuesta)
+
+
 
 @bot.message_handler(content_types=["voice"])
 def handle_voice(message: tlb.types.Message):
@@ -848,6 +921,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
 
 
 
