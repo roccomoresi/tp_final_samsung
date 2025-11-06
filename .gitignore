@@ -1,8 +1,111 @@
-.env
-.venv/
-__pycache__/
-*.pyc
-data/temp/
+# ==========================
+# ENTORNOS Y DEPENDENCIAS
+# ==========================
 venv/
+.venv/
+env/
+.env
+.env.*
+*.venv
+
+# ==========================
+# COMPILADOS Y CACHES
+# ==========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# ==========================
+# CONFIGURACIÓN Y TOKENS
+# ==========================
+# Archivos de entorno (claves, tokens, variables privadas)
+.env
+.env.local
+.env.dev
+.env.prod
+.env.example  # Podés dejarlo si solo tiene ejemplos, no datos reales
+
+# ==========================
+# ARCHIVOS DE DATOS TEMPORALES
+# ==========================
+data/
+dataset/
+datasets/
+temp/
+tmp/
+*.log
+*.csv
+*.json
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================
+# JUPYTER NOTEBOOKS Y GOOGLE COLAB
+# ==========================
+.ipynb_checkpoints/
+*.ipynb_*
+
+# ==========================
+# ENTORNOS DE DESARROLLO
+# ==========================
+.vscode/
+.idea/
+.DS_Store
+
+# ==========================
+# AUDIO, IMÁGENES Y MODELOS PESADOS
+# ==========================
+*.ogg
+*.mp3
+*.wav
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.zip
+*.tar.gz
+*.pt
+*.pth
+*.onnx
+
+# ==========================
+# ARCHIVOS DE EJECUCIÓN TEMPORAL DEL BOT
+# ==========================
+temp_voice.*
+logs/
+__output__/
+cache/
+output/
+
+# ==========================
+# ENTORNOS DE CLOUD / DOCKER / CI
+# ==========================
+*.bak
+*.swp
+*.pid
+*.tar
+*.gz
+*.egg-info/
+*.egg
+dist/
+build/
+*.spec
+
+# ==========================
+# CONFIGURACIONES LOCALES
+# ==========================
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# ==========================
+# GIT Y DOCUMENTACIÓN TEMPORAL
+# ==========================
+*.orig
+*.tmp
+*.backup
+*.old

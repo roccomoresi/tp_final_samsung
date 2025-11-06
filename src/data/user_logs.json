@@ -317,5 +317,61 @@
       "La ansiedad no se calma comiendo, sino entendiendo lo que sentís 💛",
       "Probá distraerte con algo que te guste antes de abrir la heladera 🎧"
     ]
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:21:41",
+    "mensaje": "[TEXTO] hola",
+    "sentimiento": "NEU",
+    "respuesta": "Dormir bien regula el apetito y mejora tu estado de ánimo 😴"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:21:52",
+    "mensaje": "[TEXTO] como estas",
+    "sentimiento": "NEU",
+    "respuesta": "Dormir bien regula el apetito y mejora tu estado de ánimo 😴"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:23:28",
+    "mensaje": "[TEXTO] hola",
+    "sentimiento": "NEU",
+    "respuesta": "Un día productivo también puede incluir una siesta reparadora ☀️"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:23:41",
+    "mensaje": "[TEXTO] que puedo comer hoy?",
+    "sentimiento": "NEU",
+    "respuesta": "Dormir bien regula el apetito y mejora tu estado de ánimo 😴"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:23:47",
+    "mensaje": "[TEXTO] xd",
+    "sentimiento": "NEU",
+    "respuesta": "Un día productivo también puede incluir una siesta reparadora ☀️"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:24:15",
+    "mensaje": "[TEXTO] me comi un sandwich, ahora me siento con culpa :(",
+    "sentimiento": "NEG",
+    "respuesta": "Perdonarte también es parte del bienestar 🕊️"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:25:00",
+    "mensaje": "[FOTO] huevos, tocino, pan tostado, panqueques con mantequilla",
+    "sentimiento": "NEG",
+    "respuesta": "🍽️ *Análisis de tu comida:*\n\n📋 *Identificado:* huevos, tocino, pan tostado, panqueques con mantequil"
+  },
+  {
+    "user_id": "5090077182",
+    "fecha": "2025-11-06 11:31:40",
+    "mensaje": "[VOZ]  Hola ¿Qué puedo comer hoy?",
+    "sentimiento": "NEU",
+    "respuesta": "Un día productivo también puede incluir una siesta reparadora ☀️"
   }
 ]
