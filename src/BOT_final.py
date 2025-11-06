@@ -28,12 +28,9 @@ from groq import Groq
 from transformers import pipeline
 import random
 
-
-
 # Visualización
 import matplotlib.pyplot as plt
 import pandas as pd
-from html2image import Html2Image
 
 # ============================================================================
 # CONFIGURACIÓN INICIAL
@@ -271,7 +268,9 @@ DATASET = {
         "Podés hacerlo a tu ritmo, no necesitás compararte con nadie 🌿",
         "El bienestar no es una meta, es una forma de vivir 🌞"
     ]
+    
 }
+
 
 def generar_recomendacion(texto: str, sentimiento: str) -> str:
     import random
@@ -292,8 +291,6 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
             return random.choice(respuestas) if isinstance(respuestas, list) else respuestas
     return random.choice(DATASET["respuestas_generales"])
 
-
-
 # ============================================================================
 # DATASETS DE SALUDOS Y DESPEDIDAS
 # ============================================================================
@@ -301,7 +298,7 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
 DATASET["saludos"] = {
     "patrones": [
         "hola", "buen día", "buenas", "buenas tardes", "buenas noches",
-        "hey", "holis", "holiii", "qué tal", "como estas", "cómo va", "saludos"
+        "hey", "holis", "qué tal", "como estas", "cómo va", "saludos"
     ],
     "respuestas": [
         "🌿 ¡Hola! Soy *MENTA*, tu consejera de bienestar emocional orientada a una alimentación consciente. ¿Cómo te sentís hoy?",
@@ -322,6 +319,85 @@ DATASET["despedidas"] = {
     ]
 }
 
+# ============================================================================
+# DATASET DE RECETAS DIVIDIDAS POR CATEGORÍAS
+# ============================================================================
+
+DATASET["recetas"] = {
+    "ensaladas": [
+        "🥗 *Ensalada de quinoa y vegetales:* quinoa cocida, garbanzos, tomate cherry, pepino, palta y limón. Refrescante y nutritiva.",
+        "🥬 *Ensalada verde con pollo grillado:* hojas verdes, pollo a la plancha, semillas y aderezo de yogur natural o queso crema.",
+        "🍅 *Ensalada mediterránea:* tomate, aceitunas negras, queso fresco, rúcula y aceite de oliva extra virgen.",
+        "🌽 *Ensalada de maíz y palta:* maíz, palta, cebolla morada y jugo de lima. Ideal para un almuerzo rápido.",
+        "🥕 *Zanahoria y remolacha ralladas con huevo duro y semillas de girasol.* Práctica, colorida y aporta hierro y proteínas.",
+        "🍚 *Ensalada de arroz integral:* atún, tomate, choclo y arvejas. Fresca, completa y llena de energía.",
+        "🫘 *Ensalada tibia de lentejas:* con cebolla, tomate, ajo salteado y perejil. Fácil y llenadora para cualquier comida",
+    ],
+    "desayuno": [
+        "🍞 *Tostadas integrales con palta y huevo:* ricas en proteínas y grasas buenas para empezar el día.",
+        "🥣 *Yogur natural con frutas y granola:* fuente de fibra y probióticos, excelente para el desayuno.",
+        "🍌 *Avena cocida con banana y miel:* energía de liberación lenta para toda la mañana.",
+        "🥐 *Pan de avena y semillas casero:* ideal para acompañar con infusiones o untar con queso blanco.",
+        "🍛 *Porridge de avena:* con frutas frescas de estación y un toque de canela. Energía sostenida con ingredientes accesibles.",
+        "🍳 *Omelette de claras con espinaca y tomate:* liviano, proteico y lleno de sabor.",
+        "🍓 *Smoothie bowl:* yogur natural, frutas frescas, semillas y un poco de granola por encima.",
+        "🍪 *Galletas de avena caseras:* con banana y pasas, ideales para un desayuno rápido y nutritivo."
+    ],
+    "almuerzo": [
+        "🍚 *Arroz integral con pollo y brócoli:* una opción balanceada con proteínas y carbohidratos complejos.",
+        "🍝 *Pasta integral con salsa de tomate natural y atún:* rápida, rica y nutritiva.",
+        "🍛 *Salteado de vegetales y tofu:* liviano, colorido y lleno de sabor.",
+        "🍠 *Bowl de batata asada y lentejas:* fuente excelente de fibra y proteína vegetal.",
+        "🎃 *Pastel de calabaza y carne magra: * picada con cebolla y huevo, al horno."
+        "🌲 *Tarta de brócoli y ricota en masa integral:* ideal para aprovechar sobras y sumar calcio.",
+        "🥬 *Omelette de espinaca:* acompañalo queso fresco con ensalada de tomate.",
+        "🍲 *Guiso de verduras con arroz integral:* nutritivo y reconfortante para los días fríos.",
+        "🍗 *Pechuga de pollo al horno con batatas:* simple, sabroso y lleno de nutrientes.",
+    ],
+    "cena": [
+        "🍲 *Sopa de calabaza y zanahoria:* ligera y reconfortante, ideal para la noche.",
+        "🐟 *Filet de pescado con puré de coliflor:* bajo en calorías, alto en proteínas.",
+        "🥦 *Tortilla de vegetales:* rápida y saludable para una cena liviana.",
+        "🍛 *Guiso de lentejas con verduras:* una cena nutritiva y saciante para los días fríos.",
+        "🥔 *Calabaza y papa rellenas:* (puré de calabaza o papa mezclado con verduras salteadas, horno y listo).",
+        "🎣 *Filetes de pescado al horno:* con limón y pimientos asados. Ligero y rápido.",
+        "🥗 *Ensalada de garbanzos y atún:* con tomate, cebolla y perejil. Fresca y proteica.",
+        "🍔 *Hamburguesas de porotos:* (porotos cocidos, cebolla salteada, avena, especias, horno).",
+        "🍳 *Frittata de verduras:* (huevos, espinaca, tomate, cebolla, queso).",
+        "🍝 *Pasta integral con salsa de verduras:* (berenjena, zucchini, tomate, ajo)."
+    ],
+    "merienda": [
+        "🍎 *Tostadas integrales con ricota y miel:* dulzura natural sin excesos.",
+        "☕ *Café con leche vegetal y galletas de avena caseras:* merienda simple y equilibrada.",
+        "🍓 *Yogur natural con frutos rojos y semillas:* fuente de antioxidantes.",
+        "🥜 *Mix de frutos secos con manzana:* snack saludable que mantiene tu energía estable.",
+        "🥛 *Yogur natural, frutos secos y rodajas de manzana:* Merienda fresca y saciante.",
+        "🥖 *Rodajas de pan de salvado:* con pasta de garbanzos y tomate."
+        "🍪 *Galletas de avena, banana y nuez:* hechas en horno"
+    ],
+    "licuados": [
+        "🍌 *Licuado energético:* banana, avena, leche vegetal y una cucharada de manteca de maní.",
+        "🍓 *Smoothie antioxidante:* frutos rojos, yogur y semillas de chía.",
+        "🥬 *Licuado verde detox:* espinaca, pepino, manzana verde y jengibre.",
+        "🥭 *Licuado tropical:* mango, ananá, agua de coco y limón."
+        "🟠 *Licuado de atardecer:* Licuado de naranja, zanahoria y jengibre. Refrescante y lleno de vitamina C.",
+        "🍎 *Smoothie de frutilla:* con yogur y chía. Coloreado, antioxidante y suave.",
+        "🍐 *Licuado de pera:* acompañalo con manzana y espinaca. Dulce natural y desintoxicante."
+    ]
+}
+
+# ============================================================================
+# PALABRAS CLAVE PARA DETECTAR CATEGORÍAS DE RECETAS
+# ============================================================================
+
+KEYWORDS_RECETAS = {
+    "desayuno": ["desayuno", "mañana", "temprano", "arrancar el día", "algo para desayunar"],
+    "almuerzo": ["almorzar", "almuerzo", "mediodía", "comer al mediodía"],
+    "cena": ["cena", "cenar", "noche", "algo liviano para cenar"],
+    "merienda": ["merienda", "merendar", "tarde", "algo para la tarde", "tomar el té", "mate"],
+    "ensaladas": ["ensalada", "ensaladas", "comida liviana", "plato frío"],
+    "licuados": ["licuado", "smoothie", "batido", "jugo natural", "bebida saludable"]
+}
 
 # ============================================================================
 # FUNCIONES DE DETECCIÓN DE SALUDOS Y DESPEDIDAS
@@ -351,18 +427,19 @@ def generar_saludo() -> str:
 def generar_despedida() -> str:
     return random.choice(DATASET["despedidas"]["respuestas"])
 
+
 # ============================================================================
 #  PALABRAS CLAVE PARA DETECCIÓN MANUAL DE EMOCIONES
 # ============================================================================
 
 KEYWORDS = {
     "ansiedad": ["ansiosa", "ansioso", "nerviosa", "nervioso", "me da ansiedad", "angustia"],
-    "estrés": ["estresada", "estresado", "agotada", "agotado", "tensión", "presionada", "presionado", "mucho para estudiar", "mucho trabajo"],
+    "estrés": ["estresada", "estresado", "agotada", "agotado", "tensión", "presionada"],
     "frustración": ["frustrada", "frustrado", "desanimada", "desanimado", "no puedo", "me sale mal"],
     "culpa": ["culpa", "me siento mal por comer", "no debí", "me arrepiento"],
     "tristeza": ["triste", "bajón", "sin ganas", "mal día", "deprimida", "deprimido"],
     "motivación": ["motivado", "motivada", "con ganas", "feliz", "entusiasmado", "energía"],
-    "aburrimiento": ["aburrida", "aburrido", "me aburro", "nada para hacer", "estoy embolada", "estoy embolado", "no tengo ganas", "todo me aburre"]
+    "aburrimiento": ["aburrida", "aburrido", "me aburro", "nada para hacer", "estoy embolada", "no tengo ganas de nada", "todo me aburre"]
 }
 
 def detectar_emocion_por_palabras(texto: str) -> str:
@@ -372,7 +449,6 @@ def detectar_emocion_por_palabras(texto: str) -> str:
             if palabra in texto:
                 return emocion
     return None
-
 
 # ============================================================================
 # 3. AUDIO -> TEXTO (Speech-to-Text)
@@ -549,13 +625,18 @@ def agregar_log(user_id: int, mensaje: str, sentimiento: str, respuesta: str):
 # ============================================================================
 
 def generate_dashboard_html(user_id):
-    """Genera un dashboard HTML y guarda los tres gráficos individuales."""
+    """
+    Genera un dashboard HTML con gráficos embebidos en base64.
+    No requiere archivos de imagen externos.
+    """
     import matplotlib.dates as mdates
 
+    # Creo carpeta donde guardar el dashboard 
     dashboard_dir = "data/dashboard"
     os.makedirs(dashboard_dir, exist_ok=True)
     output_path = os.path.join(dashboard_dir, f"{user_id}_dashboard.html")
 
+    # Conectamos la base de datos 
     db_path = "data/menta.db"
     if not os.path.exists(db_path):
         print("⚠️ No hay base de datos. Generá interacciones antes de usar /dashboard.")
@@ -571,37 +652,38 @@ def generate_dashboard_html(user_id):
             f.write(html)
         return output_path
 
-    # ---------------------------
-    # Función auxiliar
-    # ---------------------------
-    def fig_to_base64_and_save(fig, path):
-        """Convierte figura a base64 y la guarda en archivo PNG."""
+    # Función auxiliar para convertir imagen en base64 
+    def fig_to_base64(fig):
         buffer = io.BytesIO()
         fig.savefig(buffer, format="png", bbox_inches="tight")
-        fig.savefig(path, bbox_inches="tight")
         buffer.seek(0)
         img_b64 = base64.b64encode(buffer.read()).decode("utf-8")
         plt.close(fig)
         return img_b64
 
+    # --- Gráfico 1: Evolución del estado emocional ---
+    fig1, ax1 = plt.subplots(figsize=(7, 4))
     df["fecha"] = pd.to_datetime(df["timestamp"])
     df = df.sort_values("fecha")
 
-    # --- Gráfico 1: Evolución emocional ---
-    fig1, ax1 = plt.subplots(figsize=(7, 4))
+    # Convertir sentimientos en valores numéricos
     df["sentimiento_num"] = df["sentimiento"].map({"NEG": -1, "NEU": 0, "POS": 1})
+
+    # Graficar la evolución
     ax1.plot(df["fecha"], df["sentimiento_num"], marker="o", linewidth=2, color="#2a7c4e")
     ax1.set_title("Evolución del estado emocional")
     ax1.set_xlabel("Fecha")
     ax1.set_ylabel("Nivel de emoción (-1 Negativo / +1 Positivo)")
+
+    # Rotar fechas y mostrar menos ticks para no amontonarlas
     ax1.xaxis.set_major_locator(mdates.AutoDateLocator())
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d-%m"))
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    mood_b64 = fig_to_base64_and_save(fig1, os.path.join(dashboard_dir, f"{user_id}_fig1_emocional.png"))
+
+    mood_b64 = fig_to_base64(fig1)
 
     # --- Gráfico 2: Frecuencia por evaluación de comidas ---
-    food_b64 = ""
     if "evaluacion" in df.columns and not df["evaluacion"].isna().all():
         evaluaciones = df["evaluacion"].value_counts()
         fig2, ax2 = plt.subplots()
@@ -609,94 +691,57 @@ def generate_dashboard_html(user_id):
         ax2.set_title("Frecuencia por evaluación de comidas")
         ax2.set_xlabel("Tipo de comida")
         ax2.set_ylabel("Cantidad")
-        plt.tight_layout()
-        food_b64 = fig_to_base64_and_save(fig2, os.path.join(dashboard_dir, f"{user_id}_fig2_comidas.png"))
+        food_b64 = fig_to_base64(fig2)
+    else:
+        food_b64 = ""
 
     # --- Gráfico 3: Recomendaciones más frecuentes ---
-    recs_b64 = ""
     if "recomendacion" in df.columns and not df["recomendacion"].isna().all():
         top_recs = df["recomendacion"].value_counts().head(10)
         fig3, ax3 = plt.subplots()
         ax3.barh(top_recs.index[::-1], top_recs.values[::-1], color="skyblue")
         ax3.set_title("Recomendaciones más frecuentes")
         ax3.set_xlabel("Cantidad de veces")
-        plt.tight_layout()
-        recs_b64 = fig_to_base64_and_save(fig3, os.path.join(dashboard_dir, f"{user_id}_fig3_recomendaciones.png"))
+        recs_b64 = fig_to_base64(fig3)
+    else:
+        recs_b64 = ""
 
-    # ---------------------------
-    # HTML final
-    # ---------------------------
+    # Crea el HTML final con las imágenes embebidas 
     html = f"""
-    <html lang="es">
+    <html>
     <head>
         <meta charset="utf-8">
-        <title>Dashboard de Bienestar - Usuario {user_id}</title>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+        <title>Dashboard - Usuario {user_id}</title>
         <style>
-            body {{
-                font-family: 'Poppins', sans-serif;
-                margin: 0;
-                padding: 0;
-                background: linear-gradient(180deg, #f9fdfb 0%, #e6f1eb 100%);
-                color: #2a2a2a;
-            }}
-            header {{
-                background-color: #2a7c4e;
-                color: white;
-                padding: 20px 40px;
-                text-align: center;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            }}
-            header h1 {{ margin: 0; font-size: 26px; letter-spacing: 1px; }}
-            .container {{
-                max-width: 960px; margin: 40px auto;
-                background: white; border-radius: 16px;
-                padding: 30px 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            }}
-            h2 {{ color: #2a7c4e; margin-top: 0; }}
-            section {{ margin-bottom: 50px; }}
-            .chart {{ text-align: center; }}
-            img {{
-                display: block; margin: 0 auto 20px auto;
-                max-width: 100%; border-radius: 10px;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            }}
-            .no-data {{ color: #888; text-align: center; font-style: italic; }}
-            footer {{ text-align: center; padding: 20px; font-size: 13px; color: #666; }}
+            body {{ font-family: Arial, sans-serif; margin: 40px; background: #fafafa; color: #333; }}
+            h2 {{ color: #2a7c4e; }}
+            h3 {{ color: #444; margin-top: 40px; }}
+            img {{ display: block; margin-top: 10px; margin-bottom: 30px; max-width: 700px;
+                  border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }}
         </style>
     </head>
     <body>
-        <header><h1>🌱 Dashboard de Bienestar - Usuario {user_id}</h1></header>
-        <div class="container">
-            <section>
-                <h2>Evolución emocional</h2>
-                <div class="chart">
-                    {'<img src="data:image/png;base64,' + mood_b64 + '">' if mood_b64 else '<p class="no-data">Sin datos.</p>'}
-                </div>
-            </section>
-            <section>
-                <h2>Evaluación de comidas</h2>
-                <div class="chart">
-                    {'<img src="data:image/png;base64,' + food_b64 + '">' if food_b64 else '<p class="no-data">Sin registros de comidas.</p>'}
-                </div>
-            </section>
-            <section>
-                <h2>Recomendaciones más frecuentes</h2>
-                <div class="chart">
-                    {'<img src="data:image/png;base64,' + recs_b64 + '">' if recs_b64 else '<p class="no-data">Sin recomendaciones.</p>'}
-                </div>
-            </section>
-        </div>
-        <footer>MentaBot 🌿 · Bienestar alimenticio y emocional · Generado automáticamente</footer>
+        <h2>Dashboard - Usuario {user_id}</h2>
+        
+        <h3>Evolución del estado emocional</h3>
+        {'<img src="data:image/png;base64,' + mood_b64 + '">' if mood_b64 else '<p>No hay datos emocionales suficientes.</p>'}
+
+        <h3>Frecuencia por evaluación de comidas</h3>
+        {'<img src="data:image/png;base64,' + food_b64 + '">' if food_b64 else '<p>No hay datos de comidas suficientes.</p>'}
+
+        <h3>Recomendaciones más frecuentes</h3>
+        {'<img src="data:image/png;base64,' + recs_b64 + '">' if recs_b64 else '<p>No hay recomendaciones registradas.</p>'}
     </body>
     </html>
     """
 
+    # --- Guardar el archivo HTML ---
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"✅ Dashboard y gráficos guardados para usuario {user_id}")
+    print(f"✅ Dashboard generado: {output_path}")
     return output_path
+
 
 # ============================================================================
 # 8. MANEJADORES DEL BOT
@@ -711,11 +756,28 @@ def cmd_start(message: tlb.types.Message):
     bot.reply_to(message, bienvenida, parse_mode="Markdown")
 
 
-@bot.message_handler(commands=["ayuda", "help"])
-def cmd_ayuda(message: tlb.types.Message):
-    ayuda = """📚 *Comandos disponibles:*\n\n/start - Iniciar conversación\n/progreso - Ver tu evolución emocional\n/ayuda - Mostrar esta ayuda\n/dashboard - Generar y recibir tu dashboard en HTML\n\n🤖 *Funcionalidades de IA:*\n• Análisis de sentimientos (NLP)\n• Reconocimiento de voz (Whisper)\n• Análisis de imágenes (Vision AI)\n• Recomendaciones personalizadas\n\n💡 *Tip:* Hablame con naturalidad, entiendo español argentino perfectamente."""
-    bot.reply_to(message, ayuda, parse_mode="Markdown")
+@bot.message_handler(commands=["help", "ayuda"])
+def mostrar_ayuda(message):
+    texto_ayuda = (
+        "🌿 *¡Hola! Soy MENTA*, tu consejera de bienestar emocional y alimentación consciente.\n\n"
+        "Puedo acompañarte a mejorar tu relación con la comida y tus emociones, además de ofrecerte ideas saludables.\n\n"
+        "✨ *Estas son mis principales funciones:*\n\n"
+        "🧠 *Análisis emocional:* Detecto emociones como ansiedad, estrés, tristeza, aburrimiento o motivación, y te doy un consejo personalizado.\n"
+        "💬 *Comprensión del lenguaje:* Reconozco palabras clave y sentimientos en tus mensajes para responder con empatía.\n\n"
+        "👋 *Saludos y despedidas:* Puedo responder de forma amable cuando me saludás o te despedís.\n\n"
+        "🍎 *Recomendaciones de bienestar:* Te doy consejos prácticos sobre descanso, hidratación, autoestima y rutina.\n\n"
+        "🥗 *Recetas saludables:* Si me pedís una receta o mencionás una categoría (desayuno, almuerzo, cena, merienda, ensalada o licuado), te muestro una opción equilibrada.\n\n"
+        "📊 *Dashboard personalizado:* Si usás el comando /dashboard, genero un resumen con tu evolución emocional y tus hábitos alimentarios.\n\n"
+        "🖼️ *Análisis de imágenes:* Si me enviás una foto de tu comida, puedo analizarla y darte una evaluación nutricional con consejos.\n\n"
+        "⚙️ *Comandos útiles:*\n"
+        "• `/start` → Inicia la conversación con MENTA.\n"
+        "• `/help` o `/ayuda` → Muestra esta guía.\n"
+        "• `/dashboard` → Crea un informe con tus emociones y comidas analizadas.\n\n"
+        "💚 *Recordá:* MENTA no reemplaza a un profesional de la salud, pero puede acompañarte a construir hábitos más conscientes y sostenibles.\n\n"
+        "¿Querés empezar con una receta o hablar de cómo te sentís hoy? 🌻"
+    )
 
+    bot.reply_to(message, texto_ayuda, parse_mode="Markdown")
 
 @bot.message_handler(commands=["progreso"])
 def cmd_progreso(message: tlb.types.Message):
@@ -736,49 +798,23 @@ def cmd_progreso(message: tlb.types.Message):
         resumen += "🌱 Estoy acá para ayudarte. Juntos vamos a mejorar."
     bot.reply_to(message, resumen, parse_mode="Markdown")
 
+
 @bot.message_handler(commands=["dashboard"])
 def cmd_dashboard(message: tlb.types.Message):
     user_id = message.from_user.id
-    bot.send_chat_action(message.chat.id, "upload_photo")
-
+    bot.send_chat_action(message.chat.id, "upload_document")
     try:
-        # 1️⃣ Generar HTML (para mantener consistencia, aunque no se use)
         html_path = generate_dashboard_html(user_id)
-        if not html_path:
-            bot.reply_to(message, "⚠️ No hay datos suficientes para generar el dashboard.")
-            return
-
-        # 2️⃣ Buscar los gráficos ya guardados en el directorio (fig1, fig2, fig3)
-        dashboard_dir = "data/dashboard"
-        user_files = [
-            f for f in os.listdir(dashboard_dir)
-            if f.startswith(str(user_id)) and f.endswith(".png")
-        ]
-
-        if not user_files:
-            bot.reply_to(message, "⚠️ No se encontraron gráficos generados para este usuario.")
-            return
-
-        # 3️⃣ Enviar cada gráfico como una foto separada
-        for file_name in sorted(user_files):
-            file_path = os.path.join(dashboard_dir, file_name)
-            caption = ""
-            if "emotional" in file_name.lower() or "fig1" in file_name.lower():
-                caption = "📈 Evolución emocional"
-            elif "comida" in file_name.lower() or "fig2" in file_name.lower():
-                caption = "🍽️ Evaluación de comidas"
-            elif "recomendaciones" in file_name.lower() or "fig3" in file_name.lower():
-                caption = "💬 Recomendaciones más frecuentes"
-
-            with open(file_path, "rb") as img:
-                bot.send_photo(message.chat.id, img, caption=caption)
-
-        bot.reply_to(
-            message,
-            "✅ Dashboard completo enviado 🌿",
-            parse_mode="Markdown"
-        )
-
+        # enviar archivo HTML y las imagenes generadas
+        folder = os.path.dirname(html_path)
+        files_to_send = [html_path]
+        # incluir imagenes png generados para el usuario
+        for fname in os.listdir(folder):
+            if fname.startswith(str(user_id)) and (fname.endswith('.png') or fname.endswith('.html')):
+                files_to_send.append(os.path.join(folder, fname))
+        # Enviar html como documento
+        with open(html_path, 'rb') as f:
+            bot.send_document(message.chat.id, f, caption='Dashboard generado (abrir en navegador)')
     except Exception as e:
         print(f"❌ Error generando dashboard: {e}")
         bot.send_message(message.chat.id, "⚠️ No se pudo generar el dashboard.")
@@ -836,6 +872,22 @@ def handle_text(message):
         actualizar_memoria(user_id, "POS", respuesta)
         save_interaction(user_id, 'text', user_input, "POS", None, None, respuesta)
         return
+    
+
+      # --- 4.B Detección automática de recetas según contexto ---
+    for categoria, palabras_clave in KEYWORDS_RECETAS.items():
+        if any(palabra in user_input for palabra in palabras_clave):
+            if categoria in DATASET["recetas"]:
+                receta = random.choice(DATASET["recetas"][categoria])
+                bot.reply_to(
+                    message,
+                    f"👩‍🍳 *Receta sugerida ({categoria.title()}):*\n\n{receta}",
+                    parse_mode="Markdown"
+                )
+                actualizar_memoria(user_id, "POS", receta)
+                save_interaction(user_id, 'text', user_input, "POS", None, None, receta)
+                return
+
 
     # --- 5️) Si no hay coincidencia, usar el modelo de sentimiento ---
     sentimiento = analizar_sentimiento(user_input)
@@ -925,8 +977,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
-
-
-
-
-
