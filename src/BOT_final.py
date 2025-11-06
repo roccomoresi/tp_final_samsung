@@ -299,12 +299,16 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
 # ============================================================================
 
 DATASET["saludos"] = {
-    "patrones": ["hola", "buen día", "buenas", "buenas tardes", "buenas noches", "hey", "holis", "qué tal"],
+    "patrones": [
+        "hola", "buen día", "buenas", "buenas tardes", "buenas noches",
+        "hey", "holis", "holiii", "qué tal", "como estas", "cómo va", "saludos"
+    ],
     "respuestas": [
-        "🌱 ¡Hola! Qué alegría verte por acá 💚 ¿Cómo te sentís hoy?",
-        "👋 ¡Hola! Espero que estés teniendo un día tranquilo ☀️",
-        "💫 ¡Hola! ¿Cómo te está yendo hoy? Contame un poco 🌿",
-        "🍀 ¡Buen día! Me alegra volver a charlar con vos 😊"
+        "🌿 ¡Hola! Soy *MENTA*, tu consejera de bienestar emocional orientada a una alimentación consciente. ¿Cómo te sentís hoy?",
+        "💚 ¡Buen día! Soy *MENTA*, especialista en bienestar y alimentación saludable. Estoy acá para acompañarte en tu proceso con empatía y equilibrio. ¿Cómo estás?",
+        "🌸 ¡Hola! Te habla *MENTA*, tu guía para conectar emociones y hábitos saludables. Contame, ¿cómo viene tu día?",
+        "☀️ ¡Hola! Soy *MENTA*, tu aliada en el camino hacia una relación más consciente con la comida y con vos misma. ¿Querés que hablemos un poco?",
+        "🍀 ¡Hola! Soy *MENTA*, tu asistente de bienestar y alimentación equilibrada. Estoy lista para ayudarte a sentirte mejor. ¿Cómo estás hoy?"
     ]
 }
 
@@ -921,6 +925,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}")
         time.sleep(5)
+
 
 
 
