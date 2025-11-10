@@ -177,15 +177,6 @@ DATASET = {
             "No te juzgues por tropezar, valorá que seguís intentando 💚",
             "Tu valor no se mide por lo que lográs, sino por lo que te animás a intentar 🌻"
         ],
-        "motivación": [
-            "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗",
-            "Seguí así, estás construyendo hábitos que te van a hacer sentir bien 🌞",
-            "Motivarte hoy es cuidar de vos mañana 💫",
-            "Me encanta verte tan comprometido con tu bienestar. ¡A seguir así! 🚀",
-            "Está buenísimo que estés motivado, pero no te rijas solo por eso. La constancia es la clave 🔑",
-            "Transformá esa motivación en acción, incluso si el paso es chiquito 👣",
-            "Tu cuerpo es tu casa: cuidalo con amor y sin exigencias 🏡"
-        ],
         "culpa": [
             "No te castigues por lo que comiste. Enfocate en cómo querés sentirte mañana 🌻",
             "Tu valor no se mide por una comida. Se mide por cómo te tratás 💛",
