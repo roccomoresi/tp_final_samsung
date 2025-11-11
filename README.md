@@ -8,7 +8,7 @@
 
 ## 📋 Descripción
 
-MENTA es un bot de Telegram con IA que te acompaña en tu camino hacia un bienestar integral. Combina análisis de sentimientos, reconocimiento de voz, visión artificial y recomendaciones personalizadas para ayudarte a desarrollar una relación más consciente con la alimentación y las emociones.
+MENTA es un bot de Telegram que te acompaña en tu camino hacia un bienestar integral. Combina análisis de sentimientos y fotos contando calorías a la vez que te da consejos para cuidar de tu nutrición, reconocimiento de voz y recomendaciones personalizadas para ayudarte a desarrollar una relación más consciente con la alimentación y las emociones.
 
 El bot cuenta con una base de datos SQLite que almacena toda tu información de forma segura y estructurada: cada mensaje, análisis de comida, estado emocional y recomendación queda registrada para construir tu historial completo. Esto permite hacer un recorrido por tu progreso a lo largo del tiempo y generar un dashboard personalizado - un panel visual interactivo en formato HTML con gráficos que muestran la evolución de tu estado emocional, tus patrones alimenticios, y las recomendaciones más frecuentes que recibiste. 
 
@@ -130,12 +130,14 @@ python BOT_final.py
 
 ```
 tp_final_samsung/
+├── BOT_final.py           #proyecto bot terminado
 ├── .env                  # Variables de entorno (no incluir en git)
 ├── requirements.txt      # Dependencias del proyecto
 ├── README.md            # Este archivo
 └── src/
-    ├── BOT_final.py      # Script principal del bot
+    ├── BOT_final.py      # Script del bot con menos emociones positivas
     ├── DASHBOARD         # Ejemplo de como se ve un dashboard otorgado en Telegram
+    ├── + archivos        # muestra el archivo de como fuimos trabajando hasta llegar al archivo BOT_final.py
 └── data/
     ├── user_memory.json # Memoria contextual de usuarios
     ├── user_logs.json   # Logs de interacciones
