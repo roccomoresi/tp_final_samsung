@@ -27,8 +27,7 @@ from dotenv import load_dotenv
 from groq import Groq
 from transformers import pipeline
 import random
-from telegram import Update
-from telegram.ext import CallbackContext
+
 # Visualización
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -41,19 +40,16 @@ import pandas as pd
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-
-TOKEN_BOT_TELEGRAM = os.getenv('TOKEN_BOT_TELEGRAM')
-
-CLAVE_API_GROQ = os.getenv('CLAVE_API_GROQ')
-
-if not TOKEN_BOT_TELEGRAM:
+if not TELEGRAM_TOKEN:
     raise ValueError("❌ Faltan credenciales TELEGRAM_TOKEN en .env")
 
 # Inicializar servicios
-bot = tlb.TeleBot(TOKEN_BOT_TELEGRAM)
-if CLAVE_API_GROQ:
-    groq_client = Groq(api_key=CLAVE_API_GROQ)
+bot = tlb.TeleBot(TELEGRAM_TOKEN)
+if GROQ_API_KEY:
+    groq_client = Groq(api_key=GROQ_API_KEY)
 else:
     groq_client = None
 
@@ -146,7 +142,6 @@ def analizar_sentimiento(texto: str) -> str:
 # ============================================================================
 
 DATASET = {
-    
     "recomendaciones": {
         "ansiedad": [
             "Tomate unos minutos para respirar y tomar agua. Evitá comer por impulso 🍵",
@@ -177,6 +172,15 @@ DATASET = {
             "No te juzgues por tropezar, valorá que seguís intentando 💚",
             "Tu valor no se mide por lo que lográs, sino por lo que te animás a intentar 🌻"
         ],
+        "motivación": [
+            "¡Excelente! Aprovechá esa energía para preparar una comida nutritiva 🥗",
+            "Seguí así, estás construyendo hábitos que te van a hacer sentir bien 🌞",
+            "Motivarte hoy es cuidar de vos mañana 💫",
+            "Me encanta verte tan comprometido con tu bienestar. ¡A seguir así! 🚀",
+            "Está buenísimo que estés motivado, pero no te rijas solo por eso. La constancia es la clave 🔑",
+            "Transformá esa motivación en acción, incluso si el paso es chiquito 👣",
+            "Tu cuerpo es tu casa: cuidalo con amor y sin exigencias 🏡"
+        ],
         "culpa": [
             "No te castigues por lo que comiste. Enfocate en cómo querés sentirte mañana 🌻",
             "Tu valor no se mide por una comida. Se mide por cómo te tratás 💛",
@@ -206,46 +210,12 @@ DATASET = {
             "Transformá el aburrimiento en curiosidad: leé algo breve, salí al sol o anotá una idea que te motive ☀️"
         ],
 
-        "gratitud": [
-            "💚 Qué hermoso leer tu gratitud. Reconocer lo bueno también alimenta el bienestar.",
-            "🌸 Me alegra que te sirviera, eso demuestra tu compromiso con vos misma.",
-            "🌿 Gracias a vos por compartirlo. Practicar la gratitud fortalece el equilibrio emocional.",
-            "✨ La gratitud transforma momentos simples en valiosos."
-        ],
-        "alegría": [
-            "🌞 Qué lindo verte tan alegre. La alegría es energía pura, disfrutala.",
-            "🌻 Me encanta ver que estás disfrutando el proceso, seguí expandiendo esa buena vibra.",
-            "🎉 Tu alegría es contagiosa. Celebrar los logros, incluso los pequeños, es parte del bienestar."
-        ],
-        "amor_propio": [
-            "💖 Qué importante es que te valores. El amor propio es la base del equilibrio emocional.",
-            "🌷 Cuidarte y hablarte con cariño es un acto de amor propio.",
-            "🌿 Reconocer tus avances también es una forma de quererte más."
-        ],
-        "calma": [
-            "🍃 Qué bueno que te sientas tranquila. La calma te permite reconectar con vos misma.",
-            "🌿 Estar en paz es una forma profunda de bienestar.",
-            "💫 La serenidad también se entrena, y vos lo estás logrando."
-        ],
-        "esperanza": [
-            "🌅 Mantener la esperanza es una fuerza poderosa. Lo mejor está por venir.",
-            "🌻 Confiar en el proceso también es una forma de sanar.",
-            "💚 Cada paso, por pequeño que parezca, te acerca a un futuro más luminoso."
-        ],
-        "motivación": [
-            "🔥 Qué bueno verte con energía. Cada pequeño paso cuenta hacia tu bienestar.",
-            "🌟 Estás haciendo un gran trabajo. Seguí con esa actitud positiva.",
-            "💚 La motivación crece cuando reconocés tus propios logros.",
-            "🌸 Lo importante no es ser perfecta, sino constante. Vas muy bien."
-        ],
-
         "hidratarse": [
             "Tomar agua es esencial para el bienestar físico y mental 💧",
-            "Llevá siempre tu botella. A veces el cuerpo pide agua, no comida 🧴",
-            "Hidratate bien, te va a ayudar a pensar con más claridad 💙",
+            "Llevá siempre tu botella. A veces el cuerpo pide agua, no comida 🫗",
+            "Hidratate bien, te va a ayudar a pensar con más claridad 🩵",
             "Un vaso de agua cada hora mantiene tu energía más estable ⏳"
         ],
-
         "descanso": [
             "Dormir bien regula el apetito y mejora tu estado de ánimo 😴",
             "El descanso también es parte de una vida saludable 🌙",
@@ -297,7 +267,9 @@ DATASET = {
         "No te apures: los buenos hábitos crecen con paciencia ☀️",
         "Podés hacerlo a tu ritmo, no necesitás compararte con nadie 🌿",
         "El bienestar no es una meta, es una forma de vivir 🌞"
-    ]   }
+    ]
+    
+}
 
 
 def generar_recomendacion(texto: str, sentimiento: str) -> str:
@@ -310,7 +282,7 @@ def generar_recomendacion(texto: str, sentimiento: str) -> str:
     if sentimiento == "NEG":
         posibles = ["ansiedad", "estrés", "frustración", "culpa", "tristeza", "aburrimiento"]
     elif sentimiento == "POS":
-        posibles = ["motivación", "gratitud", "alegría", "amor_propio", "calma", "orgullo"]
+        posibles = ["motivación"]
     else:
         posibles = ["descanso", "hidratarse"]
     for clave in posibles:
@@ -470,80 +442,13 @@ KEYWORDS = {
     "aburrimiento": ["aburrida", "aburrido", "me aburro", "nada para hacer", "estoy embolada", "no tengo ganas de nada", "todo me aburre"]
 }
 
-KEYWORDS_POSITIVAS = {
-    "motivación": ["motivado", "motivada", "con ganas", "feliz", "entusiasmado", "energía", "logré"],
-    "gratitud": ["agradecido", "agradecida", "gracias", "agradezco", "bendecido"],
-    "calma": ["tranquilo", "tranquila", "en paz", "relajado", "relajada", "calmado"],
-    "alegría": ["contento", "contenta", "feliz", "alegre", "sonriente", "mejorando"],
-    "orgullo": ["orgulloso", "orgullosa", "satisfecho", "satisfecha", "logro", "mejoré"],
-    "amor_propio":["valorarme", "aceptarme", "cuidarme", "respetarme", "quererme", "me quiero", "me valoro", "me acepto", "confío en mí", "autoestima", "me cuido"]
-}
-
-
 def detectar_emocion_por_palabras(texto: str) -> str:
     texto = texto.lower()
-
-    # Primero busca emociones negativas o neutras
     for emocion, palabras in KEYWORDS.items():
         for palabra in palabras:
             if palabra in texto:
                 return emocion
-
-    # Si no encontró nada, busca emociones positivas
-    for emocion, palabras in KEYWORDS_POSITIVAS.items():
-        for palabra in palabras:
-            if palabra in texto:
-                return emocion
-
     return None
-
-def generar_respuesta_emocional(emocion: str) -> str:
-    respuestas_negativas = {
-        "ansiedad": "Recordá respirar profundo. A veces lo que sentimos no es el problema, sino cómo lo enfrentamos.",
-        "estrés": "Es normal sentirse presionado a veces. Tomate un momento para desconectarte.",
-        "frustración": "Cuando algo no sale bien, también estás aprendiendo. No te castigues.",
-        "culpa": "Perdonarte es parte del proceso. Todos nos equivocamos.",
-        "tristeza": "Está bien no estar bien. Las emociones no duran para siempre.",
-        "aburrimiento": "Tal vez sea momento de probar algo nuevo o moverte un poco.",
-    }
-
-    respuestas_positivas = {
-        "motivación": "💚 La motivación crece cuando reconocés tus propios logros.",
-        "gratitud": "🌼 Reconocer lo bueno que tenés multiplica tu bienestar.",
-        "calma": "🌿 Qué bien se siente la paz interior. Disfrutala.",
-        "alegría": "✨ Qué lindo leer eso, la alegría se contagia.",
-        "orgullo": "🏆 Sentirte orgulloso de vos mismo es señal de crecimiento.",
-        "amor_propio":"🌸 Recordá que merecés amor, empezando por el tuyo.", 
-    }
-
-    if emocion in respuestas_negativas:
-        return respuestas_negativas[emocion]
-    elif emocion in respuestas_positivas:
-        return respuestas_positivas[emocion]
-    else:
-        return "Contame un poco más sobre cómo te sentís."
-
-def manejar_mensaje(update: Update, context: CallbackContext):
-    texto_usuario = update.message.text
-    chat_id = update.message.chat_id
-
-    emocion = detectar_emocion_por_palabras(texto_usuario)
-
-    if emocion:
-        respuesta = generar_respuesta_emocional(emocion)
-        context.bot.send_message(
-            chat_id=chat_id,
-            text=f"🧠 Detecté que estás sintiendo *{emocion}*.",
-            parse_mode="Markdown"
-        )
-        context.bot.send_message(chat_id=chat_id, text=respuesta)
-    else:
-        context.bot.send_message(
-            chat_id=chat_id,
-            text="No estoy seguro de cómo te sentís, ¿querés contarme un poco más?"
-        )
-
-
 
 # ============================================================================
 # 3. AUDIO -> TEXTO (Speech-to-Text)
@@ -1123,4 +1028,9 @@ if __name__ == "__main__":
         print("\n🛑 Bot detenido manualmente.")
     except Exception as e:
         print(f"\n❌ Error: {e}")
+        time.sleep(5)
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}")
+
         time.sleep(5)
